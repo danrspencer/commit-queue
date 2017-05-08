@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
-BRANCH=`
+# Ensure git is setup correctly locally
+./setup.sh -s
 
-git cherry original/master
+BRANCH=`git branch | grep \* | awk '{print $2}'`
+
+git fetch source &> /dev/null
+git cherry source/${BRANCH}

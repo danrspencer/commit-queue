@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-BRANCH=`git branch | grep \* | awk '{print $2}'`
+# Ensure git is setup correctly locally
+./setup.sh -s
 
-git push original ${BRANCH}
-
+CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
+git push source ${CURRENT_BRANCH}

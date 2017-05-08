@@ -2,28 +2,36 @@
 
 CURRENT=`git remote -v | grep fetch | head -n 1 | awk '{print $2}'`
 
+# Sort out the remote urls
 if [[ ${CURRENT} == *-pending.git ]]
 then
-    ORIGINAL=${CURRENT%????????????}.git
+    SOURCE=${CURRENT%????????????}.git
     PENDING=${CURRENT}
 elif [[ ${CURRENT} == *-pending ]]
 then
-    ORIGINAL=${CURRENT%????????}
+    SOURCE=${CURRENT%????????}
     PENDING=${CURRENT}
 elif [[ ${CURRENT} == *.git ]]
 then
-    ORIGINAL=${CURRENT}
-    PENDING=${ORIGINAL%????}-pending.git
+    SOURCE=${CURRENT}
+    PENDING=${SOURCE%????}-pending.git
 else
-    ORIGINAL=${CURRENT}
-    PENDING=${ORIGINAL}-pending
+    SOURCE=${CURRENT}
+    PENDING=${SOURCE}-pending
 fi
 
+# Setup the local git config with the correct remotes
 git remote rm origin &> /dev/null
-git remote add origin ${ORIGINAL}
+git remote add origin ${SOURCE}
 git config remote.origin.pushurl ${PENDING}
 
-git remote rm original &> /dev/null
-git remote add original ${ORIGINAL}
+git remote rm source &> /dev/null
+git remote add source ${SOURCE}
 
-git remote -v
+git remote rm pending &> /dev/null
+git remote add pending ${PENDING}
+
+if [[ $1 != "-s" ]]
+then
+    git remote -v
+fi
