@@ -18,8 +18,8 @@ pipeline:
 	./fly --target live set-pipeline --pipeline ${PIPELINE} \
                                      --config pipelines/main.yml \
                                      --var "private-repo-key=`cat ${SSH_KEY}`" \
-                                     --var "fetch-repo=`git remote -v | grep fetch | awk '{print $$2}'`" \
-                                     --var "push-repo=`git remote -v | grep push | awk '{print $$2}'`"
+                                     --var "fetch-repo=`git remote -v | grep fetch | head -n 1 | awk '{print $$2}'`" \
+                                     --var "push-repo=`git remote -v | grep push | head -n 1 | awk '{print $$2}'`"
 
 unpause-pipeline:
 	./fly --target live unpause-pipeline --pipeline ${PIPELINE}
