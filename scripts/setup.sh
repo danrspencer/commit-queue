@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
 
-ORIGINAL=`git remote -v | grep fetch | head -n 1 | awk '{print $2}'`
+CURRENT=`git remote -v | grep fetch | head -n 1 | awk '{print $2}'`
 
-if [[ ${ORIGINAL} == *.git ]]
+if [[ ${CURRENT} == *-pending.git ]]
 then
+    ORIGINAL=${CURRENT%????????????}.git
+    PENDING=${CURRENT}
+elif [[ ${CURRENT} == *-pending ]]
+then
+    ORIGINAL=${CURRENT%????????}
+    PENDING=${CURRENT}
+elif [[ ${CURRENT} == *.git ]]
+then
+    ORIGINAL=${CURRENT}
     PENDING=${ORIGINAL%????}-pending.git
 else
+    ORIGINAL=${CURRENT}
     PENDING=${ORIGINAL}-pending
 fi
 
