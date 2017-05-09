@@ -46,7 +46,7 @@ resources:
   type: git-multibranch
   source:
     uri: {{git-repo}}
-    branch: '.+-pending-\d+'
+    branch: .*
     private_key: {{private-repo-key}}
 #
 #- name: master
