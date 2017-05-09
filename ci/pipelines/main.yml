@@ -79,9 +79,18 @@ resources:
     branch: master
     private_key: {{private-repo-key}}
 
+- name: slack
+  type: slack-notification
+
 resource_types:
 - name: git-multibranch
   type: docker-image
   source:
     repository: cfcommunity/git-multibranch-resource
+    tag: latest
+
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
     tag: latest
