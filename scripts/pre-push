@@ -5,7 +5,7 @@ CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
 if [[ ${CURRENT_BRANCH} == "master" ]] || [[ ${CURRENT_BRANCH} == "develop" ]]
 then
     echo
-    echo -e "\033[1;31mNAUGHTY! Use 'push-to-queue' to push your commits to \"master\" or \"develop\"\033[0m"
+    echo -e "\033[1;31mNAUGHTY! Use \"push-to-queue\" to push your commits to 'master' or 'develop'\033[0m"
     echo
 
     exit 1
