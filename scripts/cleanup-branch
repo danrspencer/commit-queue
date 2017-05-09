@@ -6,18 +6,10 @@ SSH_KEY=$1
 
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
 
-if [[ ${CURRENT_BRANCH} != *"-pending-"* ]]
-then
-    echo
-    echo -e "\033[1;31mERROR: '${CURRENT_BRANCH}' is not a 'pending' branch\033[0m"
-    echo
-    exit 1
-fi
-
-
 touch key
-echo SSH_KEY > key
+echo SSH_KEY > ssh-key
 
-ssh-add -K key
+eval `ssh-agent -s`
+ssh-add -K ssh-key
 
 git push origin --delete ${CURRENT_BRANCH}

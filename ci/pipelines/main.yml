@@ -35,7 +35,7 @@ jobs:
         args:
           - "did some amazing linting!"
 
-- name: sync-to-master
+- name: merge-to-master
   plan:
   - get: commit-queue
     trigger: true
@@ -48,18 +48,18 @@ jobs:
   plan:
   - get: commit-queue
     trigger: true
-    passed: [ sync-to-master ]
+    passed: [ merge-to-master ]
   - task: run
     config:
       platform: linux
       image_resource:
         type: docker-image
         source:
-          repository: yellowblackandwhite/alpine-git
+          repository: governmentpaas/git-ssh
       inputs:
       - name: commit-queue
       run:
-        path: commit-queue/scripts/cleanup-branch
+        path: scripts/cleanup-branch
         args:
           - {{private-repo-key}}
         dir: commit-queue
