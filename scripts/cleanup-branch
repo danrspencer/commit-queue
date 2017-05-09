@@ -11,4 +11,4 @@ eval "$(ssh-agent -s)"
 ssh-add
 
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
-git push origin --delete ${CURRENT_BRANCH}
+yes | git push origin --delete ${CURRENT_BRANCH}
