@@ -48,13 +48,12 @@ jobs:
       username: {{slack-username}}
       channel: {{slack-channel}}
       icon_url: {{slack-icon-url}}
+      text: "Successfully pushed into 'origin/master'"
       attachments:
-        - fallback: "Sucessfully pushed ${BRANCH} into `origin/master`."
-          color: "#36a64f"
-          pretext: "Successfully pushed into `origin/master`"
-          fields:
-            - value: "Adding Slack config for successful build"
-            - value: "Script to write Slack message"
+      - color: "#36a64f"
+        text: "Adding Slack config for successful build"
+      - color: "#36a64f"
+        text: "Script to write Slack message"
 
 - name: cleanup-branch
   plan:
