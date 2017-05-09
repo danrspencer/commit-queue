@@ -1,5 +1,13 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-echo "NAUGHTY! Use \"push-to-queue\" to push your commits"
+CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
 
-exit 1
+if [[ ${CURRENT_BRANCH} == "master" ]] || [[ ${CURRENT_BRANCH} == "develop" ]]
+then
+    echo
+    echo -e "\033[1;31m NAUGHTY! Use 'push-to-queue' to push your commits \033[0m"
+    echo -e "\033[1;31m          to \"master\" or \"develop\" \033[0m"
+    echo
+
+    exit 1
+fi

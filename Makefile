@@ -1,4 +1,3 @@
-setup: setup-push-remote
-
-setup-push-remote:
-	./scripts/setup.sh
+setup:
+	cp ./scripts/pre-push ./.git/hooks/
+	cp ./scripts/push-to-queue /usr/local/bin/

@@ -5,9 +5,22 @@ TIMESTAMP=`date +%s`
 
 PENDING_BRANCH=${CURRENT_BRANCH}-pending-${TIMESTAMP}
 
-echo $TIMESTAMP
+PROJECT_ROOT=`git rev-parse --show-toplevel`
 
+
+
+echo
+echo "Fast forwarding..."
+git stash
 git pull --rebase
+git stash pop
+
+
+echo
+echo "Creating new pending branch..."
 git checkout -b ${PENDING_BRANCH}
 git push --set-upstream origin ${PENDING_BRANCH}
+
+echo
+echo "Creating new pending branch..."
 git checkout ${CURRENT_BRANCH}
