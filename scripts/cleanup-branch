@@ -4,12 +4,11 @@ set -e
 
 SSH_KEY=$1
 
+echo "${SSH_KEY}" > ~/.ssh/id_rsa
+chmod 600 ~/.ssh/id_rsa
+
+eval "$(ssh-agent -s)"
+ssh-add
+
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
-
-touch key
-echo SSH_KEY > ssh-key
-
-eval `ssh-agent -s`
-ssh-add -K ssh-key
-
 git push origin --delete ${CURRENT_BRANCH}
