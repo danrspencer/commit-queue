@@ -60,6 +60,8 @@ jobs:
       - name: commit-queue
       run:
         path: commit-queue/scripts/cleanup-branch
+        args:
+          - {{private-repo-key}}
 
 resources:
 - name: commit-queue
