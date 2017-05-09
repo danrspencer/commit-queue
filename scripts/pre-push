@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "NAUGHTY! Use \"push-to-queue\" to push your commits"
+
+exit 1
