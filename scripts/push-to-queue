@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
+TIMESTAMP=`date +%s`
+
+echo $TIMESTAMP
+
+git pull --rebase
+git checkout -b [pending]-${CURRENT_BRANCH}-${TIMESTAMP}
