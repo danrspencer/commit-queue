@@ -40,6 +40,15 @@ jobs:
   - get: commit-queue
     trigger: true
     passed: [ unit-tests, linting ]
+  - put: master
+    params:
+      repository: commit-queue
+
+- name: cleanup-branch
+  plan:
+  - get: commit-queue
+    trigger: true
+    passed: [ sync-to-master ]
   - task: run
     config:
       platform: linux
@@ -50,10 +59,7 @@ jobs:
       inputs:
       - name: commit-queue
       run:
-        path: echo
-        args:
-          - "did some amazing linting!"
-  - put: master
+        path: commit-queue/scripts/cleanup-branch
 
 resources:
 - name: commit-queue
