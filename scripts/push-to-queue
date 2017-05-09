@@ -1,26 +1,43 @@
 #!/usr/bin/env bash
 
-CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
-TIMESTAMP=`date +%s`
-
-PENDING_BRANCH=${CURRENT_BRANCH}-pending-${TIMESTAMP}
+set -e
 
 PROJECT_ROOT=`git rev-parse --show-toplevel`
 
+TIMESTAMP=`date +%s`
+CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
+PENDING_BRANCH=${CURRENT_BRANCH}-pending-${TIMESTAMP}
 
+PENDING_COMMITS=`git cherry origin/${CURRENT_BRANCH}`
+
+
+if [[ -z ${PENDING_COMMITS} ]]
+then
+    echo
+    echo "Your branch is up-to-date with 'origin/${CURRENT_BRANCH}'."
+    echo
+
+    exit 0
+fi
 
 echo
 echo "Fast forwarding..."
-git stash
+STASH_RESULT=`git stash`
 git pull --rebase
-git stash pop
+if [[ -z ${PENDING_COMMITS} ]]
+then
+    git stash pop
+end
 
 
 echo
 echo "Creating new pending branch..."
 git checkout -b ${PENDING_BRANCH}
+
+echo
+echo "Pushing changes..."
 git push --set-upstream origin ${PENDING_BRANCH}
 
 echo
-echo "Creating new pending branch..."
+echo "Returning to ${CURRENT_BRANCH}..."
 git checkout ${CURRENT_BRANCH}
