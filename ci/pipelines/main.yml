@@ -35,39 +35,23 @@ jobs:
         args:
           - "did some amazing linting!"
 
-- name: confirm-commit
-  plan:
-  - get: commit-queue
-    trigger: true
-    passed:
-      - unit-tests
-      - linting
-  - task: run
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: node
-      inputs:
-      - name: commit-queue
-      run:
-        path: node
-        args:
-          - -v
-  - put: git
+resource_type:
+- name: git-multibranch
+  type: docker-image
+  source:
+    repository: cfcommunity/git-multibranch-resource
 
 resources:
-  - name: commit-queue
-    type: git
-    source:
-      uri: {{push-repo}}
-      branch: develop
-      private_key: {{private-repo-key}}
-
-  - name: git
-    type: git
-    source:
-      uri: {{fetch-repo}}
-      branch: develop
-      private_key: {{private-repo-key}}
+- name: commit-queue
+  type: git-multibranch
+  source:
+    uri: {{git-repo}}
+    branch: '.+-pending-\d+'
+    private_key: {{private-repo-key}}
+#
+#- name: master
+#  type: git-multibranch
+#  source:
+#    uri: {{git-repo}}
+#    branch: master
+#    private_key: {{private-repo-key}}

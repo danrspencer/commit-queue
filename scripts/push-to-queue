@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 PROJECT_ROOT=`git rev-parse --show-toplevel`
 
 TIMESTAMP=`date +%s`
@@ -7,7 +9,6 @@ CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
 PENDING_BRANCH=${CURRENT_BRANCH}-pending-${TIMESTAMP}
 
 PENDING_COMMITS=`git cherry origin/${CURRENT_BRANCH}`
-
 
 if [[ -z ${PENDING_COMMITS} ]]
 then
@@ -19,31 +20,12 @@ then
 fi
 
 echo
-echo -e "\033[1;34mFast forwarding... \033[0m"
-STASH_RESULT=`git stash`
-echo "${STASH_RESULT}"
-git pull --rebase
-REBASE_EXIT_CODE=$?
-if [[ ! -z ${PENDING_COMMITS} ]]
-then
-    git stash pop
-fi
-if [[ ${REBASE_EXIT_CODE} != 0 ]]
-then
-    exit ${REBASE_EXIT_CODE}
-fi
-
-echo
 echo -e "\033[1;34mCreating new pending branch... \033[0m"
 git checkout -b ${PENDING_BRANCH}
 
 echo
 echo -e "\033[1;34mPushing changes... \033[0m"
 git push --set-upstream origin ${PENDING_BRANCH}
-if [[ $? != 0 ]]
-then
-    exit $?
-fi
 
 echo
 echo -e "\033[1;34mReturning to '${CURRENT_BRANCH}'... \033[0m"
