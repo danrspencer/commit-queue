@@ -4,7 +4,7 @@ set -e
 
 SSH_KEY=$1
 
-CURRENT_BRANCH=`git branch | grep pending | awk '{print $2}'`
+CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
 
 if [[ ${CURRENT_BRANCH} != *"-pending-"* ]]
 then
