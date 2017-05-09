@@ -55,7 +55,7 @@ jobs:
       image_resource:
         type: docker-image
         source:
-          repository: alpine
+          repository: yellowblackandwhite/alpine-git
       inputs:
       - name: commit-queue
       run:
