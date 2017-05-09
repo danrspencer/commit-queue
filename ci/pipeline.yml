@@ -43,6 +43,12 @@ jobs:
   - put: master
     params:
       repository: commit-queue
+  - put: slack
+    params:
+      username: {{slack-username}}
+      channel: {{slack-channel}}
+      icon_url: {{slack-icon-url}}
+      text: HELLOOOOOOO
 
 - name: cleanup-branch
   plan:
@@ -81,6 +87,8 @@ resources:
 
 - name: slack
   type: slack-notification
+  source:
+    url: {{slack-url}}
 
 resource_types:
 - name: git-multibranch

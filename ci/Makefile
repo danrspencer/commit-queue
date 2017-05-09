@@ -19,7 +19,8 @@ login:
 
 pipeline:
 	./fly --target live set-pipeline --pipeline ${PIPELINE} \
-                                     --config pipelines/main.yml \
+                                     --config pipeline.yml \
+                                     --load-vars-from config.yml \
                                      --var "private-repo-key=`cat ${SSH_KEY}`" \
                                      --var "git-repo=`git remote -v | grep fetch | head -n 1 | awk '{print $$2}'`"
 

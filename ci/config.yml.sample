@@ -1,0 +1,4 @@
+slack-url: https://hooks.slack.com/services/xxxxxxxxx
+slack-channel: "#commit-queue"
+slack-username: Commit Queue
+slack-icon-url: https://assets-cdn.github.com/images/modules/logos_page/Octocat.png
