@@ -1,7 +1,10 @@
 PIPELINE=commit-queue
 SSH_KEY=~/.ssh/personal_github_rsa
 
-init: download-fly-osx login pipeline unpause-pipeline browse
+init: vagrant-up download-fly-osx login pipeline unpause-pipeline browse
+
+vagrant-up:
+	vagrant up
 
 download-fly-osx:
 	curl --user concourse:concourse -o fly 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=darwin'

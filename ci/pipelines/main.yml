@@ -35,18 +35,12 @@ jobs:
         args:
           - "did some amazing linting!"
 
-resource_type:
-- name: git-multibranch
-  type: docker-image
-  source:
-    repository: cfcommunity/git-multibranch-resource
-
 resources:
 - name: commit-queue
   type: git-multibranch
   source:
     uri: {{git-repo}}
-    branch: .*
+    branch: .+-pending-\d+
     private_key: {{private-repo-key}}
 #
 #- name: master
@@ -55,3 +49,10 @@ resources:
 #    uri: {{git-repo}}
 #    branch: master
 #    private_key: {{private-repo-key}}
+
+resource_types:
+- name: git-multibranch
+  type: docker-image
+  source:
+    repository: cfcommunity/git-multibranch-resource
+    tag: latest
