@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+SLACK_URL=$1
+SLACK_CHANNEL=$2
+
+RESULT=$3
+
+if [[ $3 == "success" ]]
+then
+    COMMITS=`git log --pretty=format:"%ad %ae %s" --date=unix origin/master..master \
+            | awk '{ print "{" }
+                   { print "    \"color\": \"#36a64f\"," }
+                   { print "    \"ts\": \"" $1 "\"," }
+                   { print "    \"author_name\": \"" $2 "\"," }
+         { $1=$2=""; print "    \"title\": \"" $0 "\"" }
+                   { print "}," }'`
+
+    PAYLOAD="payload={
+        'text': \"Successfully pushed into 'origin/master'\",
+        'channel': '$SLACK_CHANNEL',
+        'username': 'commit-bot',
+        'icon_emoji': ':robot_face:',
+        'attachments': [
+            ${COMMITS%?}
+        ]
+    }"
+else
+    CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
+
+    COMMITS=`git log --pretty=format:"%ad %ae %s" --date=unix origin/master..master \
+            | awk '{ print "{" }
+                   { print "    \"color\": \"#ff0000\"," }
+                   { print "    \"ts\": \"" $1 "\"," }
+                   { print "    \"author_name\": \"" $2 "\"," }
+         { $1=$2=""; print "    \"title\": \"" $0 "\"" }
+                   { print "}," }'`
+
+    PAYLOAD="payload={
+        'text': \"Failed to push ${CURRENT_BRANCH} into 'origin/master'\",
+        'channel': '$SLACK_CHANNEL',
+        'username': 'commit-bot',
+        'icon_emoji': ':robot_face:',
+        'attachments': [
+            ${COMMITS%?}
+        ]
+    }"
+fi
+
+
+
+echo "${PAYLOAD}"
+
+curl -X POST --data-urlencode "${PAYLOAD}" ${SLACK_URL}

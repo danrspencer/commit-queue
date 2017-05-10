@@ -43,6 +43,22 @@ jobs:
   - put: master
     params:
       repository: commit-queue
+  - task: run
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: alpine
+      inputs:
+      - name: commit-queue
+      run:
+        path: scripts/slack-notification
+        args:
+          - {{slack-url}}
+          - {{slack-channel}}
+          - success
+        dir: commit-queue
 
 - name: cleanup-branch
   plan:
@@ -78,11 +94,6 @@ resources:
     uri: {{git-repo}}
     branch: master
     private_key: {{private-repo-key}}
-
-- name: slack
-  type: slack-notification
-  source:
-    url: {{slack-url}}
 
 resource_types:
 - name: git-multibranch
