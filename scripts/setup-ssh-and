@@ -16,5 +16,7 @@ ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 if [[ ${THEN_RUN} != "" ]]
 then
-    eval "bash ${THEN_RUN}"
+    PROJECT_ROOT=`git rev-parse --show-toplevel`
+
+    eval "bash ${PROJECT_ROOT}/scripts/${THEN_RUN}"
 fi
