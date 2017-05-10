@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+SLACK_URL=$1
+SLACK_CHANNEL=$2
+
+COMMITS=`git log --pretty=format:"%ad %ae %s" --date=unix origin/master..master | awk '{ print "{" }
+                                                                                       { print "    \"color\": \"#36a64f\"," }
+                                                                                       { print "    \"ts\": \"" $1 "\"" }
+                                                                                       { print "    \"author_name\": \"" $2 "\"" }
+                                                                                       { print "}," }'`
+
+echo "${COMMITS}"
+
+#
+#PAYLOAD="payload={
+#    'text': \"Successfully pushed into 'origin/master'\",
+#    'channel': '$SLACK_CHANNEL',
+#    'username': 'commit-bot',
+#    'icon_emoji': ':robot_face:',
+#    'attachments': [
+#        { 'color': '#36a64f', 'author_name': 'dan.spencer@anaplan.com', 'title': 'Adding Slack config for successful build', 'ts': 1494251514 },
+#        { 'color': '#36a64f', 'author_name': 'dan.spencer@anaplan.com', 'title': 'Adding Slack config for successful build', 'ts': 1494251514 }
+#    ]
+#}"
+#
+#echo "${PAYLOAD}"
+#
+#curl -X POST --data-urlencode "${PAYLOAD}" ${SLACK_URL}

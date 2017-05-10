@@ -43,17 +43,6 @@ jobs:
   - put: master
     params:
       repository: commit-queue
-  - put: slack
-    params:
-      username: {{slack-username}}
-      channel: {{slack-channel}}
-      icon_url: {{slack-icon-url}}
-      text: "Successfully pushed into 'origin/master'"
-      attachments:
-      - color: "#36a64f"
-        text: "Adding Slack config for successful build"
-      - color: "#36a64f"
-        text: "Script to write Slack message"
 
 - name: cleanup-branch
   plan:
@@ -100,10 +89,4 @@ resource_types:
   type: docker-image
   source:
     repository: cfcommunity/git-multibranch-resource
-    tag: latest
-
-- name: slack-notification
-  type: docker-image
-  source:
-    repository: cfcommunity/slack-notification-resource
     tag: latest
