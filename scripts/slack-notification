@@ -22,10 +22,11 @@ CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
 
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
+git checkout master
 
 if [[ ${RESULT} == "success" ]]
 then
-    COMMITS=`git log --pretty=format:"%ct %ae %s" origin/master..${CURRENT_BRANCH} \
+    COMMITS=`git log --pretty=format:"%ct %ae %s" master..${CURRENT_BRANCH} \
             | awk '{ print "{" }
                    { print "    \"color\": \"#36a64f\"," }
                    { print "    \"ts\": \"" $1 "\"," }

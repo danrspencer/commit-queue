@@ -4,6 +4,17 @@ set -e
 
 PROJECT_ROOT=`git rev-parse --show-toplevel`
 
+if ! cmp ${PROJECT_ROOT}/scripts/push-to-queue /usr/local/bin/push-to-queue >/dev/null 2>&1
+then
+    echo
+    echo -e "\033[1;31mYour current version of 'push-to-queue' is out of date! \033[0m"
+    echo
+    echo -e "\033[1;31mPlease run 'make setup-push-script' to update it\033[0m"
+    echo
+
+    exit 1
+fi
+
 TIMESTAMP=`date +%s`
 CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
 PENDING_BRANCH=${CURRENT_BRANCH}-pending-${TIMESTAMP}
