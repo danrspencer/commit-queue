@@ -12,6 +12,6 @@ inputs:
 
 run:
   dir: commit-queue/scripts
-  path: eval
+  path: setup-ssh-and
   args:
-    - "setup-ssh && cleanup-branch"
+    - cleanup-branch
