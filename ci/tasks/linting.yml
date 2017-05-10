@@ -1,0 +1,16 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: alpine
+
+inputs:
+- name: commit-queue
+
+run:
+  path: echo
+  args:
+    - "did some amazing linting!"

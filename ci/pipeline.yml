@@ -1,45 +1,19 @@
 jobs:
-- name: unit-tests
+- name: validate-commits
   plan:
   - get: commit-queue
     trigger: true
-  - task: run
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: alpine
-      inputs:
-      - name: commit-queue
-      run:
-        path: echo
-        args:
-          - "ran some awesome unit tests!"
-
-- name: linting
-  plan:
-  - get: commit-queue
-    trigger: true
-  - task: run
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: alpine
-      inputs:
-      - name: commit-queue
-      run:
-        path: echo
-        args:
-          - "did some amazing linting!"
+  - aggregate:
+    - task: unit-tests
+      file: commit-queue/ci/tasks/unit-tests.yml
+    - task: linting
+      file: commit-queue/ci/tasks/linting.yml
 
 - name: merge-to-master
   plan:
   - get: commit-queue
     trigger: true
-    passed: [ unit-tests, linting ]
+    passed: [ validate-commits ]
   - task: run
     config:
       platform: linux
@@ -58,9 +32,9 @@ jobs:
           - {{slack-channel}}
           - success
         dir: commit-queue
-#  - put: master
-#    params:
-#      repository: commit-queue
+  - put: master
+    params:
+      repository: commit-queue
   - task: run
     config:
       platform: linux
@@ -105,12 +79,12 @@ resources:
     branches: .*-pending-\d*
     private_key: {{private-repo-key}}
 
-#- name: master
-#  type: git-multibranch
-#  source:
-#    uri: {{git-repo}}
-#    branch: master
-#    private_key: {{private-repo-key}}
+- name: master
+  type: git-multibranch
+  source:
+    uri: {{git-repo}}
+    branch: master
+    private_key: {{private-repo-key}}
 
 resource_types:
 - name: git-multibranch
