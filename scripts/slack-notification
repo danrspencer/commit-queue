@@ -1,13 +1,30 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-SLACK_URL=$1
-SLACK_CHANNEL=$2
+set -e
 
-RESULT=$3
+SSH_KEY=$1
+
+echo "${SSH_KEY}" > ~/.ssh/id_rsa
+chmod 600 ~/.ssh/id_rsa
+
+eval "$(ssh-agent -s)"
+ssh-add
+ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+#------------------------------------------------------------#
+
+SLACK_URL=$2
+SLACK_CHANNEL=$3
+
+RESULT=$4
+
+CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
+
+git fetch
 
 if [[ $3 == "success" ]]
 then
-    COMMITS=`git log --pretty=format:"%ad %ae %s" --date=unix origin/master..master \
+    COMMITS=`git log --pretty=format:"%ad %ae %s" --date=unix origin/master..${CURRENT_BRANCH} \
             | awk '{ print "{" }
                    { print "    \"color\": \"#36a64f\"," }
                    { print "    \"ts\": \"" $1 "\"," }
@@ -25,8 +42,6 @@ then
         ]
     }"
 else
-    CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
-
     COMMITS=`git log --pretty=format:"%ad %ae %s" --date=unix origin/master..master \
             | awk '{ print "{" }
                    { print "    \"color\": \"#ff0000\"," }
@@ -45,8 +60,6 @@ else
         ]
     }"
 fi
-
-
 
 echo "${PAYLOAD}"
 

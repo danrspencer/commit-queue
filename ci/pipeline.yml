@@ -49,12 +49,13 @@ jobs:
       image_resource:
         type: docker-image
         source:
-          repository: byrnedo/alpine-curl
+          repository: governmentpaas/git-ssh
       inputs:
       - name: commit-queue
       run:
         path: scripts/slack-notification
         args:
+          - {{private-repo-key}}
           - {{slack-url}}
           - {{slack-channel}}
           - success
