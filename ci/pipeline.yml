@@ -46,7 +46,7 @@ jobs:
       image_resource:
         type: docker-image
         source:
-          repository: yellowblackandwhite/alpine-git
+          repository: governmentpaas/git-ssh
       inputs:
       - name: commit-queue
       outputs:
@@ -58,16 +58,16 @@ jobs:
           - {{slack-channel}}
           - success
         dir: commit-queue
-  - put: master
-    params:
-      repository: commit-queue
+#  - put: master
+#    params:
+#      repository: commit-queue
   - task: run
     config:
       platform: linux
       image_resource:
         type: docker-image
         source:
-          repository: yellowblackandwhite/alpine-git
+          repository: governmentpaas/git-ssh
       inputs:
       - name: slack-payload
       - name: commit-queue
@@ -88,7 +88,7 @@ jobs:
       image_resource:
         type: docker-image
         source:
-          repository: yellowblackandwhite/alpine-git
+          repository: governmentpaas/git-ssh
       inputs:
       - name: commit-queue
       run:
@@ -105,12 +105,12 @@ resources:
     branches: .*-pending-\d*
     private_key: {{private-repo-key}}
 
-- name: master
-  type: git-multibranch
-  source:
-    uri: {{git-repo}}
-    branch: master
-    private_key: {{private-repo-key}}
+#- name: master
+#  type: git-multibranch
+#  source:
+#    uri: {{git-repo}}
+#    branch: master
+#    private_key: {{private-repo-key}}
 
 resource_types:
 - name: git-multibranch
