@@ -20,6 +20,10 @@ then
 fi
 
 echo
+echo -e "\033[1;34mPulling 'origin/master' into local branch... \033[0m"
+git pull
+
+echo
 echo -e "\033[1;34mCreating new pending branch... \033[0m"
 git checkout -b ${PENDING_BRANCH}
 
