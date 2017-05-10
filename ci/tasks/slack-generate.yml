@@ -1,6 +1,7 @@
 ---
 
 platform: linux
+
 image_resource:
   type: docker-image
   source:
@@ -13,9 +14,5 @@ outputs:
 - name: slack-payload
 
 run:
-  path: scripts/slack-notification-generate
+  path: scripts/slack-generate
   dir: commit-queue
-#  args:
-#    - {{private-repo-key}}
-#    - {{slack-channel}}
-#    - success

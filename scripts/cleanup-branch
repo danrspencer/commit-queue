@@ -2,7 +2,7 @@
 
 set -e
 
-SSH_KEY=$1
+SSH_KEY=`printenv private-repo-key`
 
 touch ~/.ssh/id_rsa
 echo "${SSH_KEY}" > ~/.ssh/id_rsa

@@ -2,7 +2,7 @@
 
 set -e
 
-SLACK_URL=$1
+SLACK_URL=`printenv slack-url`
 PROJECT_ROOT=`git rev-parse --show-toplevel`
 
 PAYLOAD=`cat ${PROJECT_ROOT}/../slack-payload/payload.json`

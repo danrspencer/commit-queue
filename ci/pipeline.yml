@@ -15,29 +15,18 @@ jobs:
     trigger: true
     passed: [ validate-commits ]
   - task: run
-    file: commit-queue/ci/tasks/slack-notification-generate.yml
+    file: commit-queue/ci/tasks/slack-generate.yml
     params:
-      priate-repo-key: {{private-repo-key}}
+      private-repo-key: {{private-repo-key}}
       slack-channel: {{slack-channel}}
       build-status: success
   - put: master
     params:
       repository: commit-queue
   - task: run
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: governmentpaas/git-ssh
-      inputs:
-      - name: slack-payload
-      - name: commit-queue
-      run:
-        path: scripts/slack-notification-send
-        args:
-          - {{slack-url}}
-        dir: commit-queue
+    file: commit-queue/ci/tasks/slack-send.yml
+    params:
+      slack-url: {{slack-url}}
 
 - name: cleanup-branch
   plan:
@@ -45,19 +34,9 @@ jobs:
     trigger: true
     passed: [ merge-to-master ]
   - task: run
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: governmentpaas/git-ssh
-      inputs:
-      - name: commit-queue
-      run:
-        path: scripts/cleanup-branch
-        args:
-          - {{private-repo-key}}
-        dir: commit-queue
+    file: commit-queue/ci/tasks/cleanup-branch.yml
+    params:
+      private-repo-key: {{private-repo-key}}
 
 resources:
 - name: commit-queue
