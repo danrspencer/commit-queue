@@ -19,7 +19,7 @@ jobs:
     params:
       private-repo-key: {{private-repo-key}}
       slack-channel: {{slack-channel}}
-      build-status: success
+      build-result: success
   - put: master
     params:
       repository: commit-queue
