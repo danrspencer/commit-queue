@@ -6,15 +6,42 @@ jobs:
   - aggregate:
     - task: unit-tests
       file: commit-queue/ci/tasks/unit-tests.yml
+      on_failure:
+        do:
+        - task: generate-slack-message
+          file: commit-queue/ci/tasks/slack-generate.yml
+          params:
+            private-repo-key: {{private-repo-key}}
+            slack-channel: {{slack-channel}}
+            build-result: failure
+        - task: run
+          file: commit-queue/ci/tasks/slack-send.yml
+          params:
+            slack-url: {{slack-url}}
     - task: linting
       file: commit-queue/ci/tasks/linting.yml
+      on_failure:
+        do:
+        - task: generate-slack-message
+          file: commit-queue/ci/tasks/slack-generate.yml
+          params:
+            private-repo-key: {{private-repo-key}}
+            slack-channel: {{slack-channel}}
+            build-result: failure
+        - task: run
+          file: commit-queue/ci/tasks/slack-send.yml
+          params:
+            slack-url: {{slack-url}}
+
+
+
 
 - name: merge-to-master
   plan:
   - get: commit-queue
     trigger: true
     passed: [ validate-commits ]
-  - task: run
+  - task: generate-slack-message
     file: commit-queue/ci/tasks/slack-generate.yml
     params:
       private-repo-key: {{private-repo-key}}
