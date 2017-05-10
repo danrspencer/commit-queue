@@ -16,6 +16,5 @@ ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 if [[ ${THEN_RUN} != "" ]]
 then
-    eval ${THEN_RUN}
+    eval "bash ${THEN_RUN}"
 fi
-    
