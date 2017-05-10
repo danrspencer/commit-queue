@@ -21,7 +21,7 @@ fi
 
 echo
 echo -e "\033[1;34mPulling 'origin/master' into local branch... \033[0m"
-git pull
+git pull --rebase
 
 echo
 echo -e "\033[1;34mCreating new pending branch... \033[0m"
