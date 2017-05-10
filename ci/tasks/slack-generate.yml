@@ -14,4 +14,4 @@ outputs:
 - name: slack-payload
 
 run:
-  path: slack-payload/scripts/setup-ssh
+  path: commit-queue/scripts/setup-ssh
