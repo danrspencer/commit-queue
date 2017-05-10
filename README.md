@@ -5,8 +5,10 @@ An example project based on the idea from the Chromium commit queue to prevent t
 ### How it works
 
 1. A simple `pre-push` hook prevents direct pushes into the trunk branch
-2. The bash script, `push-to-queue`, handles creating and push new unique branch
-3. Concourse picks up the new branch, validates the commits are good then merges into master and deletes the branch
+1. The bash script, `push-to-queue`, handles creating and pushes new unique branch
+1. Concourse picks up the new branch validates it by running tests, linting, etc..
+    1. If it passes then merges the commits into master and deletes the branch
+    1. If it fails it leaves branch in place so it can be more easily diagnosed and alerts the team via Slack
 
 ![alt terminal](https://raw.githubusercontent.com/danrspencer/commit-queue/master/docs/terminal.png)
 

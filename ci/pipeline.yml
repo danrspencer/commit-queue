@@ -33,9 +33,6 @@ jobs:
           params:
             slack-url: {{slack-url}}
 
-
-
-
 - name: merge-to-master
   plan:
   - get: commit-queue
