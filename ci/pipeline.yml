@@ -15,23 +15,11 @@ jobs:
     trigger: true
     passed: [ validate-commits ]
   - task: run
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: governmentpaas/git-ssh
-      inputs:
-      - name: commit-queue
-      outputs:
-      - name: slack-payload
-      run:
-        path: scripts/slack-notification-generate
-        args:
-          - {{private-repo-key}}
-          - {{slack-channel}}
-          - success
-        dir: commit-queue
+    file: commit-queue/ci/tasks/slack-notification-generate.yml
+    params:
+      priate-repo-key: {{private-repo-key}}
+      slack-channel: {{slack-channel}}
+      build-status: success
   - put: master
     params:
       repository: commit-queue
