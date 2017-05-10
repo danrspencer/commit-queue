@@ -7,4 +7,4 @@ PROJECT_ROOT=`git rev-parse --show-toplevel`
 
 PAYLOAD=`cat ${PROJECT_ROOT}/../slack-payload/payload.json`
 
-curl -X POST --data-urlencode ${PAYLOAD} ${SLACK_URL}
+curl -X POST --data-urlencode "${PAYLOAD}" ${SLACK_URL}
