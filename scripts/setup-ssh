@@ -2,8 +2,6 @@
 
 set -e
 
-THEN_RUN=$1
-
 SSH_KEY=`printenv private-repo-key`
 
 touch ~/.ssh/id_rsa
@@ -13,8 +11,3 @@ chmod 600 ~/.ssh/id_rsa
 eval "$(ssh-agent -s)"
 ssh-add
 ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-if [[ ${THEN_RUN} != "" ]]
-then
-    eval "bash ${THEN_RUN}"
-fi
