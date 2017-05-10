@@ -15,7 +15,6 @@ outputs:
 
 run:
   dir: commit-queue/scripts
-  path: setup-ssh
+  path: setup-ssh;
   args:
-    - &&
-    - slack-generate
+    - slack-generate;

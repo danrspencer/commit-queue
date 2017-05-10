@@ -31,7 +31,7 @@ then
         ]
     }"
 else
-    COMMITS=`git log --pretty=format:"%ct %ae %s" origin/master..master \
+    COMMITS=`git log --pretty=format:"%ct %ae %s" master..${CURRENT_BRANCH} \
             | awk '{ print "{" }
                    { print "    \"color\": \"#ff0000\"," }
                    { print "    \"ts\": \"" $1 "\"," }
