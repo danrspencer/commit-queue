@@ -13,10 +13,8 @@ ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 #------------------------------------------------------------#
 
-SLACK_URL=$2
-SLACK_CHANNEL=$3
-
-RESULT=$4
+SLACK_CHANNEL=$2
+BUILD_RESULT=$3
 
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
 
@@ -24,7 +22,7 @@ git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
 git checkout master
 
-if [[ ${RESULT} == "success" ]]
+if [[ ${BUILD_RESULT} == "success" ]]
 then
     COMMITS=`git log --pretty=format:"%ct %ae %s" master..${CURRENT_BRANCH} \
             | awk '{ print "{" }
@@ -63,6 +61,6 @@ else
     }"
 fi
 
-echo "${PAYLOAD}"
+PROJECT_ROOT=`git rev-parse --show-toplevel`
 
-curl -X POST --data-urlencode "${PAYLOAD}" ${SLACK_URL}
+echo "${PAYLOAD}" > ${PROJECT_ROOT}/../slack-payload/payload.json

@@ -40,6 +40,24 @@ jobs:
   - get: commit-queue
     trigger: true
     passed: [ unit-tests, linting ]
+  - task: run
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: yellowblackandwhite/alpine-git
+      inputs:
+      - name: commit-queue
+      outputs:
+      - name: slack-payload
+      run:
+        path: scripts/slack-notification-generate
+        args:
+          - {{private-repo-key}}
+          - {{slack-channel}}
+          - success
+        dir: commit-queue
   - put: master
     params:
       repository: commit-queue
@@ -51,14 +69,12 @@ jobs:
         source:
           repository: yellowblackandwhite/alpine-git
       inputs:
+      - name: slack-payload
       - name: commit-queue
       run:
-        path: scripts/slack-notification
+        path: scripts/slack-notification-send
         args:
-          - {{private-repo-key}}
           - {{slack-url}}
-          - {{slack-channel}}
-          - success
         dir: commit-queue
 
 - name: cleanup-branch

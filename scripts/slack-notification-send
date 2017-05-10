@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -e
+
+SLACK_URL=$1
+PROJECT_ROOT=`git rev-parse --show-toplevel`
+
+PAYLOAD=`cat ${PROJECT_ROOT}/../slack-payload/payload.json`
+
+curl -X POST --data-urlencode  ${SLACK_URL}
