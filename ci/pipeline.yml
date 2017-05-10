@@ -49,7 +49,7 @@ jobs:
       image_resource:
         type: docker-image
         source:
-          repository: governmentpaas/git-ssh
+          repository: yellowblackandwhite/alpine-git
       inputs:
       - name: commit-queue
       run:
@@ -72,7 +72,7 @@ jobs:
       image_resource:
         type: docker-image
         source:
-          repository: governmentpaas/git-ssh
+          repository: yellowblackandwhite/alpine-git
       inputs:
       - name: commit-queue
       run:

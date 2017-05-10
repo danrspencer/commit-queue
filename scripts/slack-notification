@@ -20,7 +20,8 @@ RESULT=$4
 
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
 
-git fetch
+git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+git fetch origin
 
 if [[ ${RESULT} == "success" ]]
 then

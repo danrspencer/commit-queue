@@ -36,4 +36,8 @@ echo -e "\033[1;34mReturning to '${CURRENT_BRANCH}'... \033[0m"
 git checkout ${CURRENT_BRANCH}
 
 echo
+echo -e "\033[1;34mCleaning up '${PENDING_BRANCH}'... \033[0m"
+git branch -d ${PENDING_BRANCH}
+
+echo
 echo -e "\033[1;34mSuccess! Your changes have been pushed to '${PENDING_BRANCH}' \033[0m"
