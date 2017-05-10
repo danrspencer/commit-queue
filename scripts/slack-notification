@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 SLACK_URL=$1
 SLACK_CHANNEL=$2
