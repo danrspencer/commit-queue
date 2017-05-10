@@ -10,6 +10,18 @@ An example project based on the idea from the Chromium commit queue to prevent t
   
 ### Setup
 
-To setup the `pre-push` hook and the `push-to-queue` script simple run `make` from the root of the project.
+##### Scripts
+
+Run `make` in the root of the project to setup  the `pre-push` hook and the `push-to-queue` script.
+```
+$ make
+```
+
+##### CI
  
-To start Concourse run `make` inside the `ci` folder.
+To start Concourse run `make` inside the `ci` folder, this will spin up the Vagrant box and setup the pipeline.
+
+```
+$ cd ci
+$ make
+```
