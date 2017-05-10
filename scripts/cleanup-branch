@@ -2,17 +2,5 @@
 
 set -e
 
-SSH_KEY=`printenv private-repo-key`
-
-touch ~/.ssh/id_rsa
-echo "${SSH_KEY}" > ~/.ssh/id_rsa
-chmod 600 ~/.ssh/id_rsa
-
-eval "$(ssh-agent -s)"
-ssh-add
-ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-#------------------------------------------------------------#
-
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
 git push origin --delete ${CURRENT_BRANCH}

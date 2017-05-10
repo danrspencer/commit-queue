@@ -14,5 +14,8 @@ outputs:
 - name: slack-payload
 
 run:
-  path: scripts/slack-generate
-  dir: commit-queue
+  dir: commit-queue/scripts
+  path: setup-ssh
+  args:
+    - &&
+    - slack-generate
