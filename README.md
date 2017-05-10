@@ -17,7 +17,7 @@ Run `make` in the root of the project to setup  the `pre-push` hook and the `pus
 $ make
 ```
 
-##### CI
+##### Concourse
  
 To start Concourse run `make` inside the `ci` folder, this will spin up the Vagrant box and setup the pipeline.
 

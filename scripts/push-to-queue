@@ -20,7 +20,7 @@ then
 fi
 
 echo
-echo -e "\033[1;34mPulling 'origin/master' into local branch... \033[0m"
+echo -e "\033[1;34mPulling 'origin/${CURRENT_BRANCH}' into local branch... \033[0m"
 git pull --rebase
 
 echo
