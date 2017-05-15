@@ -1,43 +1,47 @@
 jobs:
-- name: validate-commits
+- name: unit-tests
   plan:
   - get: commit-queue
     trigger: true
-  - aggregate:
-    - task: unit-tests
-      file: commit-queue/ci/tasks/unit-tests.yml
-      on_failure:
-        do:
-        - task: generate-slack-message
-          file: commit-queue/ci/tasks/slack-generate.yml
-          params:
-            private-repo-key: {{private-repo-key}}
-            slack-channel: {{slack-channel}}
-            build-result: failure
-        - task: run
-          file: commit-queue/ci/tasks/slack-send.yml
-          params:
-            slack-url: {{slack-url}}
-    - task: linting
-      file: commit-queue/ci/tasks/linting.yml
-      on_failure:
-        do:
-        - task: generate-slack-message
-          file: commit-queue/ci/tasks/slack-generate.yml
-          params:
-            private-repo-key: {{private-repo-key}}
-            slack-channel: {{slack-channel}}
-            build-result: failure
-        - task: run
-          file: commit-queue/ci/tasks/slack-send.yml
-          params:
-            slack-url: {{slack-url}}
+  - task: unit-tests
+    file: commit-queue/ci/tasks/unit-tests.yml
+    on_failure:
+      do:
+      - task: generate-slack-message
+        file: commit-queue/ci/tasks/slack-generate.yml
+        params:
+          private-repo-key: {{private-repo-key}}
+          slack-channel: {{slack-channel}}
+          build-result: failure
+      - task: run
+        file: commit-queue/ci/tasks/slack-send.yml
+        params:
+          slack-url: {{slack-url}}
+
+- name: linting
+  plan:
+  - get: commit-queue
+    trigger: true
+  - task: linting
+    file: commit-queue/ci/tasks/linting.yml
+    on_failure:
+      do:
+      - task: generate-slack-message
+        file: commit-queue/ci/tasks/slack-generate.yml
+        params:
+          private-repo-key: {{private-repo-key}}
+          slack-channel: {{slack-channel}}
+          build-result: failure
+      - task: run
+        file: commit-queue/ci/tasks/slack-send.yml
+        params:
+          slack-url: {{slack-url}}
 
 - name: merge-to-master
   plan:
   - get: commit-queue
     trigger: true
-    passed: [ validate-commits ]
+    passed: [ unit-tests, linting ]
   - task: generate-slack-message
     file: commit-queue/ci/tasks/slack-generate.yml
     params:
