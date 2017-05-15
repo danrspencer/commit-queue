@@ -19,9 +19,11 @@ TIMESTAMP=`date +%s`
 CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
 PENDING_BRANCH=${CURRENT_BRANCH}-pending-${TIMESTAMP}
 
-PENDING_COMMITS=`git cherry origin/${CURRENT_BRANCH}`
+echo
+echo -e "\033[1;34mPulling 'origin/${CURRENT_BRANCH}' into local branch... \033[0m"
+git pull --rebase
 
-if [[ -z ${PENDING_COMMITS} ]]
+if [[ -z `git cherry origin/${CURRENT_BRANCH}` ]]
 then
     echo
     echo "Your branch is up-to-date with 'origin/${CURRENT_BRANCH}'."
@@ -30,9 +32,6 @@ then
     exit 0
 fi
 
-echo
-echo -e "\033[1;34mPulling 'origin/${CURRENT_BRANCH}' into local branch... \033[0m"
-git pull --rebase
 
 echo
 echo -e "\033[1;34mCreating new pending branch... \033[0m"
