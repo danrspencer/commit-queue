@@ -18,5 +18,5 @@ if [[ ${THEN_RUN} != "" ]]
 then
     PROJECT_ROOT=`git rev-parse --show-toplevel`
 
-    eval "bash ${PROJECT_ROOT}/scripts/${THEN_RUN}"
+    eval "bash ${PROJECT_ROOT}/ci/scripts/${THEN_RUN}"
 fi
