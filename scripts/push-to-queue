@@ -22,7 +22,7 @@ PENDING_BRANCH=${CURRENT_BRANCH}-pending-${TIMESTAMP}
 if [[ ! -z `git status | grep "Changes to be committed"` ]] || [[ ! -z $* ]]
 then
     echo
-    echo -e "\033[1;34mStaged changes found, committing... \033[0m"
+    echo -e "\033[1;34mCommitting changes... \033[0m"
     git commit "$*"
 fi
 
