@@ -12,5 +12,5 @@ inputs:
 - name: commit-queue
 
 run:
-  path: scripts/slack-send
+  path: ci/scripts/slack-send
   dir: commit-queue
