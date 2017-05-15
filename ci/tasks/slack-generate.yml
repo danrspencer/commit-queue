@@ -8,12 +8,12 @@ image_resource:
     repository: governmentpaas/git-ssh
 
 inputs:
-- name: commit-queue
+- name: branch
 
 outputs:
 - name: slack-payload
 
 run:
-  dir: commit-queue
+  dir: branch
   path: ci/scripts/setup-ssh-and
   args: [ slack-generate ]

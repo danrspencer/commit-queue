@@ -9,8 +9,8 @@ image_resource:
 
 inputs:
 - name: slack-payload
-- name: commit-queue
+- name: branch
 
 run:
   path: ci/scripts/slack-send
-  dir: commit-queue
+  dir: branch

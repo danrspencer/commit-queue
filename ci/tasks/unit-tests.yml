@@ -8,7 +8,7 @@ image_resource:
     repository: alpine
 
 inputs:
-- name: commit-queue
+- name: branch
 
 run:
   path: echo
