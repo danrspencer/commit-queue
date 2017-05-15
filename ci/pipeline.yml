@@ -1,73 +1,73 @@
 jobs:
 - name: unit-tests
   plan:
-  - get: commit-queue
+  - get: branch
     trigger: true
   - task: unit-tests
-    file: commit-queue/ci/tasks/unit-tests.yml
+    file: branch/ci/tasks/unit-tests.yml
     on_failure:
       do:
       - task: generate-slack-message
-        file: commit-queue/ci/tasks/slack-generate.yml
+        file: branch/ci/tasks/slack-generate.yml
         params:
           private-repo-key: {{private-repo-key}}
           slack-channel: {{slack-channel}}
           build-result: failure
       - task: run
-        file: commit-queue/ci/tasks/slack-send.yml
+        file: branch/ci/tasks/slack-send.yml
         params:
           slack-url: {{slack-url}}
 
 - name: linting
   plan:
-  - get: commit-queue
+  - get: branch
     trigger: true
   - task: linting
-    file: commit-queue/ci/tasks/linting.yml
+    file: branch/ci/tasks/linting.yml
     on_failure:
       do:
       - task: generate-slack-message
-        file: commit-queue/ci/tasks/slack-generate.yml
+        file: branch/ci/tasks/slack-generate.yml
         params:
           private-repo-key: {{private-repo-key}}
           slack-channel: {{slack-channel}}
           build-result: failure
       - task: run
-        file: commit-queue/ci/tasks/slack-send.yml
+        file: branch/ci/tasks/slack-send.yml
         params:
           slack-url: {{slack-url}}
 
 - name: merge-to-master
   plan:
-  - get: commit-queue
+  - get: branch
     trigger: true
     passed: [ unit-tests, linting ]
   - task: generate-slack-message
-    file: commit-queue/ci/tasks/slack-generate.yml
+    file: branch/ci/tasks/slack-generate.yml
     params:
       private-repo-key: {{private-repo-key}}
       slack-channel: {{slack-channel}}
       build-result: success
   - put: master
     params:
-      repository: commit-queue
+      repository: branch
   - task: run
-    file: commit-queue/ci/tasks/slack-send.yml
+    file: branch/ci/tasks/slack-send.yml
     params:
       slack-url: {{slack-url}}
 
 - name: cleanup-branch
   plan:
-  - get: commit-queue
+  - get: branch
     trigger: true
     passed: [ merge-to-master ]
   - task: run
-    file: commit-queue/ci/tasks/cleanup-branch.yml
+    file: branch/ci/tasks/cleanup-branch.yml
     params:
       private-repo-key: {{private-repo-key}}
 
 resources:
-- name: commit-queue
+- name: branch
   type: git-multibranch
   source:
     uri: {{git-repo}}
