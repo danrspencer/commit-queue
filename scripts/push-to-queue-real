@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+set -e
+
+TIMESTAMP=`date +%s`
+CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
+PENDING_BRANCH=${CURRENT_BRANCH}-pending-${TIMESTAMP}
+
+if [[ ! -z `git status | grep "Changes to be committed"` ]] || [[ ! -z $* ]]
+then
+    echo
+    echo -e "\033[1;34mCommitting changes... \033[0m"
+    git commit "$*"
+fi
+
+echo
+echo -e "\033[1;34mPulling 'origin/${CURRENT_BRANCH}' into local branch... \033[0m"
+git pull --rebase
+
+if [[ -z `git cherry origin/${CURRENT_BRANCH}` ]]
+then
+    echo
+    echo "Your branch is up-to-date with 'origin/${CURRENT_BRANCH}'."
+    echo
+
+    exit 0
+fi
+
+
+echo
+echo -e "\033[1;34mCreating new pending branch... \033[0m"
+git checkout -b ${PENDING_BRANCH}
+
+echo
+echo -e "\033[1;34mPushing changes... \033[0m"
+git push --set-upstream origin ${PENDING_BRANCH}
+
+echo
+echo -e "\033[1;34mReturning to '${CURRENT_BRANCH}'... \033[0m"
+git checkout ${CURRENT_BRANCH}
+
+echo
+echo -e "\033[1;34mCleaning up local branch... \033[0m"
+git branch -d ${PENDING_BRANCH}
+
+echo
+echo -e "\033[1;34mSuccess! Your changes have been pushed to '${PENDING_BRANCH}' \033[0m"
