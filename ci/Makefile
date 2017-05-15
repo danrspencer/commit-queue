@@ -1,5 +1,5 @@
 PIPELINE=commit-queue
-SSH_KEY=~/.ssh/personal_github_rsa
+SSH_KEY=~/.ssh/id_rsa
 
 init: vagrant-up download-fly-osx login pipeline unpause-pipeline browse
 
