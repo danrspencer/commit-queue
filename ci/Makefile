@@ -8,11 +8,11 @@ vagrant-up:
 	vagrant up
 
 download-fly-osx:
-	./scripts/retry curl --user concourse:concourse -o fly 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=darwin' -m 5
+	./scripts/retry curl --user concourse:concourse -o fly 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=darwin' -m 30
 	chmod +x fly
 
 download-fly-linux:
-	./scripts/retry curl --user concourse:concourse -o fly 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=linux' -m 5
+	./scripts/retry curl --user concourse:concourse -o fly 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=linux' -m 30
 	chmod +x fly
 
 login:
