@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+MAX_ATTEMPTS=5
+WAIT=5
+
+RETRIES=0
+
+$* && exit
+
+until [ ${RETRIES} -ge ${MAX_ATTEMPTS} ]
+do
+    RETRIES=$[$RETRIES+1]
+
+    echo -e "\033[1;31m\"$*\" failed, retrying in ${WAIT} seconds (${RETRIES} of ${MAX_ATTEMPTS})\033[0m"
+    sleep ${WAIT}
+
+    $* && break
+done

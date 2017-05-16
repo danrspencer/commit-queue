@@ -1,17 +1,18 @@
 PIPELINE=commit-queue
 SSH_KEY=~/.ssh/id_rsa
 
-init: vagrant-up download-fly-osx login pipeline unpause-pipeline browse
+init: vagrant-up download-fly-osx login pipeline-ni unpause-pipeline browse
 
 vagrant-up:
+	vagrant box update
 	vagrant up
 
 download-fly-osx:
-	curl --user concourse:concourse -o fly 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=darwin'
+	./scripts/retry curl --user concourse:concourse -o fly 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=darwin' -m 5
 	chmod +x fly
 
 download-fly-linux:
-	curl --user concourse:concourse -o fly 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=linux'
+	./scripts/retry curl --user concourse:concourse -o fly 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=linux' -m 5
 	chmod +x fly
 
 login:
@@ -19,6 +20,14 @@ login:
 
 pipeline:
 	./fly --target live set-pipeline --pipeline ${PIPELINE} \
+									 --config pipeline.yml \
+									 --load-vars-from config.yml \
+									 --var "private-repo-key=`cat ${SSH_KEY}`" \
+									 --var "git-repo=`git remote -v | grep fetch | head -n 1 | awk '{print $$2}'`"
+
+pipeline-ni:
+	./fly --target live set-pipeline --non-interactive \
+									 --pipeline ${PIPELINE} \
                                      --config pipeline.yml \
                                      --load-vars-from config.yml \
                                      --var "private-repo-key=`cat ${SSH_KEY}`" \
