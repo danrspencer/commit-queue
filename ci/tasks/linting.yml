@@ -11,6 +11,6 @@ inputs:
 - name: branch
 
 run:
-  path: echo
+  path: exec
   args:
-    - "did some amazing linting!"
+    - echo 1 && echo 2
