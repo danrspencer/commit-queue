@@ -15,5 +15,9 @@ outputs:
 
 run:
   dir: branch
-  path: ci/scripts/setup-ssh-and
-  args: [ slack-generate ]
+  path: sh
+  args:
+  - -exc
+  - |
+    ci/scripts/setup-ssh
+    ci/scripts/slack-generate
