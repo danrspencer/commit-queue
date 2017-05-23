@@ -29,8 +29,8 @@ COMMITS=`git log --pretty=format:"%ct %H %ae %s" origin/${TARGET_BRANCH}..${CURR
                    { print "    \"color\": \"#'${COLOR}'\"," }
                    { print "    \"ts\": \"" $1 "\"," }
                    { print "    \"author_name\": \"" $3 "\"," }
-      { $1=$2=$3=""; print "    \"title\": \"" $0 "\"" }
-                   { print "    \"title_link\": \"" '${GIT_WEB_URL}'/commit/$2 "\"," }
+                   { print "    \"title_link\": \"'${GIT_WEB_URL}'/commit/" $2 "\"," }
+      { $1=$2=$3=""; print "    \"title\": \""$0"\"" }
                    { print "}," }'`
 
 PAYLOAD="payload={
