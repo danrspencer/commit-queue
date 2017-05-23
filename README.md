@@ -2,7 +2,7 @@
 
 An example project based on the idea from the Chromium commit queue to prevent the trunk ever being red while still allowing everyone to work on the trunk branch.
 
-### Quick Start
+## Quick Start
 
 Quickly bootstrap your project with Concourse and the Commit Queue pipeline by running the `bootstrap.sh` in your project root.
 
@@ -23,7 +23,7 @@ To push using the queue run `push-to-queue`. Optionally you can pass command arg
 push-to-queue -am "adding all the files, setting commit msg and pushing!"
 ```
 
-### Manual Setup
+## Manual Setup
 
 ##### Scripts
 
@@ -44,7 +44,7 @@ $ make
 ```
 
 
-### How it works
+## How it works
 
 1. A simple `pre-push` hook prevents direct pushes into the trunk branch
 1. The bash script, `push-to-queue`, handles creating and pushes new unique branch
