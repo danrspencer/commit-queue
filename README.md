@@ -17,7 +17,6 @@ brew cask install virtualbox
 brew cask install vagrant
 ```
 
-
 ### How it works
 
 1. A simple `pre-push` hook prevents direct pushes into the trunk branch
