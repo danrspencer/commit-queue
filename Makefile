@@ -6,6 +6,9 @@ setup-pre-push:
 setup-push-script:
 	cp ./scripts/push-to-queue /usr/local/bin/
 
+setup-quick-push-script:
+	cp ./scripts/push-to-queue /usr/local/bin/p2q
+
 disable-pre-push:
 	@echo
 	@echo "\033[1;31mYou'd better be doing this for a good reason or I will strike \033[0m"
