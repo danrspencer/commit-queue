@@ -1,6 +1,6 @@
 # Commit Queue
 
-An example project based on the idea from the Chromium commit queue to prevent the trunk ever being red while still allowing everyone to work on the trunk branch.
+Based on the idea from the Chromium commit queue to prevent the trunk ever being red while still allowing everyone to work on the trunk branch.
 
 ![alt terminal](https://raw.githubusercontent.com/danrspencer/commit-queue/master/docs/terminal.png)
 
