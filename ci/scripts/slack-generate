@@ -31,7 +31,7 @@ COMMITS=`git log --pretty=format:"%ct %H %ae %s" origin/${TARGET_BRANCH}..${CURR
                    { print "    \"author_name\": \"" $3 "\"," }
                    { print "    \"title_link\": \"'${GIT_WEB_URL}'/commit/" $2 "\"," }
       { $1=$2=$3=""; print "    \"title\": \""$0"\"" }
-                   { print "    \"is_app_unfurl\": false
+                   { print "    \"is_app_unfurl\": false" }
                    { print "}," }'`
 
 PAYLOAD="payload={
