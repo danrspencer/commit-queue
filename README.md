@@ -31,7 +31,7 @@ push-to-queue -am "adding all the files, setting commit msg and pushing!"
 
 ## Manual Setup
 
-##### Scripts
+#### Scripts
 
 Copy the `ci`, `scripts` and `Makefile` into your project, then run `make` in the root of the project to setup the `pre-push` hook and the `push-to-queue` script.
 ```
@@ -40,7 +40,7 @@ $ make
 
 Optionally run `make setup-quick-push-script` to setup a shortcut to the push script as `p2q`. 
 
-##### Concourse
+#### Concourse
  
 To start Concourse run `make` inside the `ci` folder, this will spin up the Vagrant box and setup the pipeline.
 
