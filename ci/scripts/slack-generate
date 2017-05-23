@@ -2,10 +2,9 @@
 
 set -e
 
-SLACK_CHANNEL=`printenv slack-channel`
 BUILD_RESULT=`printenv build-result`
 
-GIT_WEB_URL=`git remote -v | grep fetch | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2\//'`
+GIT_WEB_URL=`git remote -v | grep fetch | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2/'`
 
 TARGET_BRANCH=`printenv target-branch`
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
@@ -31,12 +30,10 @@ COMMITS=`git log --pretty=format:"%ct %H %ae %s" origin/${TARGET_BRANCH}..${CURR
                    { print "    \"author_name\": \"" $3 "\"," }
                    { print "    \"title_link\": \"'${GIT_WEB_URL}'/commit/" $2 "\"," }
       { $1=$2=$3=""; print "    \"title\": \""$0"\"" }
-                   { print "    \"is_app_unfurl\": false" }
                    { print "}," }'`
 
 PAYLOAD="payload={
     \"text\": \"${MESSAGE}\",
-    \"channel\": \"${SLACK_CHANNEL}\",
     \"username\": \"commit-bot\",
     \"icon_emoji\": \":robot_face:\",
     \"attachments\": [
@@ -49,7 +46,6 @@ PROJECT_ROOT=`git rev-parse --show-toplevel`
 echo "Slack message generated: "
 echo
 echo "${PAYLOAD}"
-echo
 echo
 
 echo "${PAYLOAD}" > ${PROJECT_ROOT}/../slack-payload/payload.json

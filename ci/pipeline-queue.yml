@@ -14,7 +14,6 @@ jobs:
       file: branch/ci/tasks/slack-generate.yml
       params:
         private-repo-key: {{private-repo-key}}
-        slack-channel: {{slack-channel}}
         build-result: failure
         target-branch: {{main-branch}}
     - task: slack-send
@@ -31,7 +30,6 @@ jobs:
     file: branch/ci/tasks/slack-generate.yml
     params:
       private-repo-key: {{private-repo-key}}
-      slack-channel: {{slack-channel}}
       build-result: success
       target-branch: {{main-branch}}
   - put: {{main-branch}}
