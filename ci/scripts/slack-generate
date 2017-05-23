@@ -5,12 +5,10 @@ set -e
 SLACK_CHANNEL=`printenv slack-channel`
 BUILD_RESULT=`printenv build-result`
 
-GIT_WEB_URL=`git remote -v | grep fetch | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2\/tree\//'`
+GIT_WEB_URL=`git remote -v | grep fetch | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2\//'`
 
 TARGET_BRANCH=`printenv target-branch`
-TARGET_BRANCH_URL=${GIT_WEB_URL}/tree/${TARGET_BRANCH}
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
-CURRENT_BRANCH_URL=${GIT_WEB_URL}/tree/${CURRENT_BRANCH}
 
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 # Not sure we need these lines, delete them if it still works
@@ -19,24 +17,25 @@ git fetch origin
 
 if [[ ${BUILD_RESULT} == "success" ]]
 then
-    MESSAGE="Successfully pushed into <${TARGET_BRANCH_URL}|'origin/${TARGET_BRANCH}'>"
+    MESSAGE="Successfully pushed into <${GIT_WEB_URL}/tree/${TARGET_BRANCH}|'origin/${TARGET_BRANCH}'>"
     COLOR="36a64f"
 else
-    MESSAGE="Failed to push <${CURRENT_BRANCH_URL}|'${CURRENT_BRANCH}'> into <${TARGET_BRANCH_URL}|'origin/${TARGET_BRANCH}'>"
+    MESSAGE="Failed to push <${GIT_WEB_URL}/tree/${CURRENT_BRANCH}|'${CURRENT_BRANCH}'> into <${GIT_WEB_URL}/tree/${TARGET_BRANCH}|'origin/${TARGET_BRANCH}'>"
     COLOR="ff0000"
 fi
 
-COMMITS=`git log --pretty=format:"%ct %ae %s" origin/${TARGET_BRANCH}..${CURRENT_BRANCH} \
+COMMITS=`git log --pretty=format:"%ct %H %ae %s" origin/${TARGET_BRANCH}..${CURRENT_BRANCH} \
             | awk '{ print "{" }
                    { print "    \"color\": \"#'${COLOR}'\"," }
                    { print "    \"ts\": \"" $1 "\"," }
-                   { print "    \"author_name\": \"" $2 "\"," }
-         { $1=$2=""; print "    \"title\": \"" $0 "\"" }
+                   { print "    \"author_name\": \"" $3 "\"," }
+      { $1=$2=$3=""; print "    \"title\": \"" $0 "\"" }
+                   { print "    \"title_link\": \"" '${GIT_WEB_URL}'/commit/$2 "\"," }
                    { print "}," }'`
 
 PAYLOAD="payload={
-    'text': \"'${MESSAGE}'\",
-    'channel': '$SLACK_CHANNEL',
+    'text': '${MESSAGE}',
+    'channel': '${SLACK_CHANNEL}',
     'username': 'commit-bot',
     'icon_emoji': ':robot_face:',
     'attachments': [
