@@ -1,5 +1,2 @@
-github-url: https://github.com/danrspencer/commit-queue
-main-branch: master
-
 slack-url: https://hooks.slack.com/services/xxxxxxxxx
 slack-channel: "#commit-queue"

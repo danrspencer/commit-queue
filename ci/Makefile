@@ -8,7 +8,7 @@
 PIPELINE_NAME=`git remote -v | grep fetch | head -n 1 | sed 's/.*\/\(.*\)\..*/\1/'`
 GIT_REPO=`git remote -v | grep fetch | head -n 1 | awk '{print $$2}'`
 GIT_WEB_URL=`git remote -v | grep fetch | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2\/tree\//'`
-MAIN_BRANCH=`git branch | grep \* | awk '{print $$2}'`
+BRANCH=`git branch | grep \* | awk '{print $$2}'`
 
 SSH_KEY_PATH=~/.ssh/id_rsa
 LIVE_URL=https://ci.concourse.ci
@@ -22,18 +22,20 @@ login:
 
 pipeline: login
 	./fly --target ${TARGET} set-pipeline --pipeline ${PIPELINE_NAME} \
-									 --config commit-queue.yml \
+									 --config pipeline.yml \
 									 --load-vars-from config-${TARGET}.yml \
 									 --var "private-repo-key=`cat ${SSH_KEY_PATH}`" \
-									 --var "git-repo=${GIT_REPO}"
+									 --var "branch=${BRANCH}" \
+									 --var "git-repo=${GIT_REPO}" \
+									 --var "git-web-url=${GIT_WEB_URL}"
 
 commit-queue: login
 	./fly --target ${TARGET} set-pipeline --pipeline ${PIPELINE_NAME}_queue \
 									 --config commit-queue.yml \
 									 --load-vars-from config-${TARGET}.yml \
 									 --var "private-repo-key=`cat ${SSH_KEY_PATH}`" \
+									 --var "main-branch=${BRANCH}" \
 									 --var "git-repo=${GIT_REPO}" \
-									 --var "main-branch=${MAIN_BRANCH}" \
 									 --var "git-web-url=${GIT_WEB_URL}"
 
 # Live
@@ -60,8 +62,8 @@ download-fly-linux: OS=linux
 download-fly-win: OS=windows
 
 config:
-	cp -n ./config-dev.yml.sample ./config-dev.yml || true
-	cp -n ./config-live.yml.sample ./config-live.yml || true
+	cp -n ./config.yml.sample ./config-dev.yml || true
+	cp -n ./config.yml.sample ./config-live.yml || true
 
 unpause-pipeline:
 	./fly --target ${TARGET} unpause-pipeline --pipeline ${PIPELINE_NAME}
