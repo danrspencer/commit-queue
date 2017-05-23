@@ -5,7 +5,7 @@ set -e
 SLACK_CHANNEL=`printenv slack-channel`
 BUILD_RESULT=`printenv build-result`
 
-GIT_WEB_URL=`printenv git-web-url`
+GIT_WEB_URL=`git remote -v | grep fetch | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2\/tree\//'`
 
 TARGET_BRANCH=`printenv target-branch`
 TARGET_BRANCH_URL=${GIT_WEB_URL}/tree/${TARGET_BRANCH}

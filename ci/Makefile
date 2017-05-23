@@ -7,7 +7,6 @@
 
 PIPELINE_NAME=`git remote -v | grep fetch | head -n 1 | sed 's/.*\/\(.*\)\..*/\1/'`
 GIT_REPO=`git remote -v | grep fetch | head -n 1 | awk '{print $$2}'`
-GIT_WEB_URL=`git remote -v | grep fetch | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2\/tree\//'`
 BRANCH=`git branch | grep \* | awk '{print $$2}'`
 
 SSH_KEY_PATH=~/.ssh/id_rsa
@@ -26,17 +25,14 @@ pipeline: login
 									 --load-vars-from config-${TARGET}.yml \
 									 --var "private-repo-key=`cat ${SSH_KEY_PATH}`" \
 									 --var "branch=${BRANCH}" \
-									 --var "git-repo=${GIT_REPO}" \
-									 --var "git-web-url=${GIT_WEB_URL}"
-
+									 --var "git-repo=${GIT_REPO}"
 pipeline-queue: login
 	./fly --target ${TARGET} set-pipeline --pipeline ${PIPELINE_NAME}_queue \
 									 --config pipeline-queue.yml \
 									 --load-vars-from config-${TARGET}.yml \
 									 --var "private-repo-key=`cat ${SSH_KEY_PATH}`" \
 									 --var "main-branch=${BRANCH}" \
-									 --var "git-repo=${GIT_REPO}" \
-									 --var "git-web-url=${GIT_WEB_URL}"
+									 --var "git-repo=${GIT_REPO}"
 
 # Live
 live-login: TARGET=live

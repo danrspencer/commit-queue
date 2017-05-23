@@ -3,6 +3,7 @@
 set -e
 
 SSH_KEY=`printenv private-repo-key`
+GIT_REPO=`git remote -v | grep fetch | head -n 1 | awk '{print $$2}' | sed 's/.*@\(.*\):.*/\1/'`
 
 touch ~/.ssh/id_rsa
 echo "${SSH_KEY}" > ~/.ssh/id_rsa
@@ -10,4 +11,4 @@ chmod 600 ~/.ssh/id_rsa
 
 eval "$(ssh-agent -s)"
 ssh-add
-ssh-keyscan github.anaplan.com >> ~/.ssh/known_hosts
+ssh-keyscan ${GIT_REPO} >> ~/.ssh/known_hosts
