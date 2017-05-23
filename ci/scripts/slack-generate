@@ -5,50 +5,44 @@ set -e
 SLACK_CHANNEL=`printenv slack-channel`
 BUILD_RESULT=`printenv build-result`
 
+GITHUB_URL=`printenv github-url`
+
+TARGET_BRANCH=`printenv target-branch`
+TARGET_BRANCH_URL=${GITHUB_URL}/tree/${TARGET_BRANCH}
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
+CURRENT_BRANCH_URL=${GITHUB_URL}/tree/${CURRENT_BRANCH}
 
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
-git fetch origin
-git checkout master
+# Not sure we need these lines, delete them if it still works
+#git fetch origin
+#git checkout ${TARGET_BRANCH}
 
 if [[ ${BUILD_RESULT} == "success" ]]
 then
-    COMMITS=`git log --pretty=format:"%ct %ae %s" master..${CURRENT_BRANCH} \
-            | awk '{ print "{" }
-                   { print "    \"color\": \"#36a64f\"," }
-                   { print "    \"ts\": \"" $1 "\"," }
-                   { print "    \"author_name\": \"" $2 "\"," }
-         { $1=$2=""; print "    \"title\": \"" $0 "\"" }
-                   { print "}," }'`
-
-    PAYLOAD="payload={
-        'text': \"Successfully pushed into 'origin/master'\",
-        'channel': '$SLACK_CHANNEL',
-        'username': 'commit-bot',
-        'icon_emoji': ':robot_face:',
-        'attachments': [
-            ${COMMITS%?}
-        ]
-    }"
+    MESSAGE="Successfully pushed into 'origin/${TARGET_BRANCH}'"
+    COLOR="36a64f"
 else
-    COMMITS=`git log --pretty=format:"%ct %ae %s" master..${CURRENT_BRANCH} \
+    MESSAGE="Failed to push `${CURRENT_BRANCH}` into 'origin/${TARGET_BRANCH}'"
+    COLOR="ff0000"
+fi
+
+COMMITS=`git log --pretty=format:"%ct %ae %s" origin/${TARGET_BRANCH}..${CURRENT_BRANCH} \
             | awk '{ print "{" }
-                   { print "    \"color\": \"#ff0000\"," }
+                   { print "    \"color\": \"#'${COLOR}'\"," }
                    { print "    \"ts\": \"" $1 "\"," }
                    { print "    \"author_name\": \"" $2 "\"," }
          { $1=$2=""; print "    \"title\": \"" $0 "\"" }
                    { print "}," }'`
 
-    PAYLOAD="payload={
-        'text': \"Failed to push `${CURRENT_BRANCH}` into 'origin/master'\",
-        'channel': '$SLACK_CHANNEL',
-        'username': 'commit-bot',
-        'icon_emoji': ':robot_face:',
-        'attachments': [
-            ${COMMITS%?}
-        ]
-    }"
-fi
+PAYLOAD="payload={
+    'text': \"'${MESSAGE}'\",
+    'channel': '$SLACK_CHANNEL',
+    'username': 'commit-bot',
+    'icon_emoji': ':robot_face:',
+    'attachments': [
+        ${COMMITS%?}
+    ]
+}"
 
 PROJECT_ROOT=`git rev-parse --show-toplevel`
 

@@ -1,40 +1,75 @@
-PIPELINE=commit-queue
-SSH_KEY=~/.ssh/id_rsa
+# ------ Config ------
+#
+# By default lots of these are generated from
+# details of the git repo but they can be replaced
+# with specific values.
+#
 
-init: vagrant-up download-fly-osx login pipeline-ni unpause-pipeline browse
+PIPELINE_NAME=`git remote -v | grep fetch | head -n 1 | sed 's/.*\/\(.*\)\..*/\1/'`
+GIT_REPO=`git remote -v | grep fetch | head -n 1 | awk '{print $$2}'`
+GIT_WEB_URL=`git remote -v | grep fetch | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2\/tree\//'`
+MAIN_BRANCH=`git branch | grep \* | awk '{print $$2}'`
 
+SSH_KEY_PATH=~/.ssh/id_rsa
+LIVE_URL=https://ci.concourse.ci
+# --------------------
+
+init: vagrant-up download-fly config pipeline unpause-pipeline browse-dev
+
+# Dev
+login:
+	./fly --target ${TARGET} login --concourse-url ${URL}
+
+pipeline: login
+	./fly --target ${TARGET} set-pipeline --pipeline ${PIPELINE_NAME} \
+									 --config commit-queue.yml \
+									 --load-vars-from config-${TARGET}.yml \
+									 --var "private-repo-key=`cat ${SSH_KEY_PATH}`" \
+									 --var "git-repo=${GIT_REPO}"
+
+commit-queue: login
+	./fly --target ${TARGET} set-pipeline --pipeline ${PIPELINE_NAME}_queue \
+									 --config commit-queue.yml \
+									 --load-vars-from config-${TARGET}.yml \
+									 --var "private-repo-key=`cat ${SSH_KEY_PATH}`" \
+									 --var "git-repo=${GIT_REPO}" \
+									 --var "main-branch=${MAIN_BRANCH}" \
+									 --var "git-web-url=${GIT_WEB_URL}"
+
+# Live
+live-login: TARGET=live
+live-login: URL=${LIVE_URL}
+live-login: login
+
+live-pipeline: TARGET=live
+live-pipeline: live-login pipeline
+
+live-commit-queue: TARGET=live
+live-commit-queue: live-login pipeline
+
+# Setup
 vagrant-up:
 	vagrant box update
 	vagrant up
 
-download-fly-osx:
-	./scripts/retry curl --user concourse:concourse -o fly 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=darwin' -m 30
+download-fly:
+	./scripts/retry curl --user concourse:concourse -o fly '${URL}/api/v1/cli?arch=amd64&platform=${OS}' -m 30
 	chmod +x fly
 
-download-fly-linux:
-	./scripts/retry curl --user concourse:concourse -o fly 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=linux' -m 30
-	chmod +x fly
+download-fly-linux: OS=linux
+download-fly-win: OS=windows
 
-login:
-	./fly --target live login --concourse-url http://192.168.100.4:8080
-
-pipeline:
-	./fly --target live set-pipeline --pipeline ${PIPELINE} \
-									 --config pipeline.yml \
-									 --load-vars-from config.yml \
-									 --var "private-repo-key=`cat ${SSH_KEY}`" \
-									 --var "git-repo=`git remote -v | grep fetch | head -n 1 | awk '{print $$2}'`"
-
-pipeline-ni:
-	./fly --target live set-pipeline --non-interactive \
-									 --pipeline ${PIPELINE} \
-                                     --config pipeline.yml \
-                                     --load-vars-from config.yml \
-                                     --var "private-repo-key=`cat ${SSH_KEY}`" \
-                                     --var "git-repo=`git remote -v | grep fetch | head -n 1 | awk '{print $$2}'`"
+config:
+	cp -n ./config-dev.yml.sample ./config-dev.yml || true
+	cp -n ./config-live.yml.sample ./config-live.yml || true
 
 unpause-pipeline:
-	./fly --target live unpause-pipeline --pipeline ${PIPELINE}
+	./fly --target ${TARGET} unpause-pipeline --pipeline ${PIPELINE_NAME}
 
-browse:
+browse-dev:
 	open http://192.168.100.4:8080/teams/main/login
+
+# Defaults
+TARGET=dev
+OS=darwin
+URL=http://192.168.100.4:8080

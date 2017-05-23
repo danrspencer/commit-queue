@@ -1,89 +1,15 @@
 jobs:
-- name: unit-tests
+- name: hello-world
   plan:
-  - get: branch
+  - get: commit-queue
     trigger: true
-  - task: unit-tests
-    file: branch/ci/tasks/unit-tests.yml
-    on_failure:
-      do:
-      - task: generate-slack-message
-        file: branch/ci/tasks/slack-generate.yml
-        params:
-          private-repo-key: {{private-repo-key}}
-          slack-channel: {{slack-channel}}
-          build-result: failure
-      - task: run
-        file: branch/ci/tasks/slack-send.yml
-        params:
-          slack-url: {{slack-url}}
-
-- name: linting
-  plan:
-  - get: branch
-    trigger: true
-  - task: linting
-    file: branch/ci/tasks/linting.yml
-    on_failure:
-      do:
-      - task: generate-slack-message
-        file: branch/ci/tasks/slack-generate.yml
-        params:
-          private-repo-key: {{private-repo-key}}
-          slack-channel: {{slack-channel}}
-          build-result: failure
-      - task: run
-        file: branch/ci/tasks/slack-send.yml
-        params:
-          slack-url: {{slack-url}}
-
-- name: merge-to-master
-  plan:
-  - get: branch
-    trigger: true
-    passed: [ unit-tests, linting ]
-  - task: generate-slack-message
-    file: branch/ci/tasks/slack-generate.yml
-    params:
-      private-repo-key: {{private-repo-key}}
-      slack-channel: {{slack-channel}}
-      build-result: success
-  - put: master
-    params:
-      repository: branch
-  - task: run
-    file: branch/ci/tasks/slack-send.yml
-    params:
-      slack-url: {{slack-url}}
-
-- name: cleanup-branch
-  plan:
-  - get: branch
-    trigger: true
-    passed: [ merge-to-master ]
-  - task: run
-    file: branch/ci/tasks/cleanup-branch.yml
-    params:
-      private-repo-key: {{private-repo-key}}
+  - task: hello-world
+    file: commit-queue/ci/tasks/placeholder.yml
 
 resources:
-- name: branch
-  type: git-multibranch
+- name: commit-queue
+  type: git
   source:
     uri: {{git-repo}}
-    branches: .*-pending-\d*
+    branches: master
     private_key: {{private-repo-key}}
-
-- name: master
-  type: git-multibranch
-  source:
-    uri: {{git-repo}}
-    branch: master
-    private_key: {{private-repo-key}}
-
-resource_types:
-- name: git-multibranch
-  type: docker-image
-  source:
-    repository: cfcommunity/git-multibranch-resource
-    tag: latest

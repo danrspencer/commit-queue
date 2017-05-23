@@ -1,0 +1,75 @@
+jobs:
+- name: validation
+  plan:
+  - get: branch
+    trigger: true
+  - aggregate:
+    - task: unit-tests
+      file: branch/ci/tasks/placeholder.yml
+    - task: linting
+      file: branch/ci/tasks/placeholder.yml
+  on_failure:
+    do:
+    - task: generate-slack-message
+      file: branch/ci/tasks/slack-generate.yml
+      params:
+        private-repo-key: {{private-repo-key}}
+        slack-channel: {{slack-channel}}
+        build-result: failure
+        target-branch: {{main-branch}}
+    - task: run
+      file: branch/ci/tasks/slack-send.yml
+      params:
+        slack-url: {{slack-url}}
+
+- name: merge-commits
+  plan:
+  - get: branch
+    trigger: true
+    passed: [ validation ]
+  - task: generate-slack-message
+    file: branch/ci/tasks/slack-generate.yml
+    params:
+      private-repo-key: {{private-repo-key}}
+      slack-channel: {{slack-channel}}
+      build-result: success
+      target-branch: {{main-branch}}
+  - put: {{main-branch}}
+    params:
+      repository: branch
+  - task: run
+    file: branch/ci/tasks/slack-send.yml
+    params:
+      slack-url: {{slack-url}}
+
+- name: cleanup-branch
+  plan:
+  - get: branch
+    trigger: true
+    passed: [ merge-commits ]
+  - task: run
+    file: branch/ci/tasks/cleanup-branch.yml
+    params:
+      private-repo-key: {{private-repo-key}}
+
+resources:
+- name: branch
+  type: git-multibranch
+  source:
+    uri: {{git-repo}}
+    branches: .*-pending-\d*
+    private_key: {{private-repo-key}}
+
+- name: {{main-branch}}
+  type: git-multibranch
+  source:
+    uri: {{git-repo}}
+    branch: {{main-branch}}
+    private_key: {{private-repo-key}}
+
+resource_types:
+- name: git-multibranch
+  type: docker-image
+  source:
+    repository: cfcommunity/git-multibranch-resource
+    tag: latest

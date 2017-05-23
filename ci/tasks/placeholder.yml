@@ -1,0 +1,20 @@
+---
+
+# This can be a useful task to leave in place and use as the
+# default task while you're defining the structure of your
+# pipeline.
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: alpine
+
+inputs:
+- name: branch
+
+run:
+  path: echo
+  args:
+    - "placeholder"
