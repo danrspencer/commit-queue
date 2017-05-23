@@ -44,4 +44,4 @@ echo -e "\033[1;34mCleaning up local branch... \033[0m"
 git branch -d ${PENDING_BRANCH}
 
 echo
-echo -e "\033[1;34mSuccess! Your changes have been pushed to '${PENDING_BRANCH}' \033[0m"
+echo -e "\033[1;34mSuccess! Your changes have been pushed to 'origin/${PENDING_BRANCH}' \033[0m"
