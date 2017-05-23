@@ -14,15 +14,15 @@ CURRENT_BRANCH_URL=${GIT_WEB_URL}/tree/${CURRENT_BRANCH}
 
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 # Not sure we need these lines, delete them if it still works
-#git fetch origin
+git fetch origin
 #git checkout ${TARGET_BRANCH}
 
 if [[ ${BUILD_RESULT} == "success" ]]
 then
-    MESSAGE="Successfully pushed into 'origin/${TARGET_BRANCH}'"
+    MESSAGE="Successfully pushed into <${TARGET_BRANCH_URL}|'origin/${TARGET_BRANCH}'>"
     COLOR="36a64f"
 else
-    MESSAGE="Failed to push `${CURRENT_BRANCH}` into 'origin/${TARGET_BRANCH}'"
+    MESSAGE="Failed to push <${CURRENT_BRANCH_URL}|'${CURRENT_BRANCH}'> into <${TARGET_BRANCH_URL}|'origin/${TARGET_BRANCH}'>"
     COLOR="ff0000"
 fi
 
