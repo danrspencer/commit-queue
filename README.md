@@ -2,6 +2,22 @@
 
 An example project based on the idea from the Chromium commit queue to prevent the trunk ever being red while still allowing everyone to work on the trunk branch.
 
+### Getting started
+
+Quickly bootstrap your project with Concourse and the Commit Queue pipeline by running the `bootstrap.sh` in your project root.
+
+```
+curl -s https://raw.githubusercontent.com/danrspencer/commit-queue/master/bootstrap.sh | bash /dev/stdin
+```
+
+The bootstrap script assumes you already have Vagrant installed. If you don't use the following commands to install it:
+
+```
+brew cask install virtualbox
+brew cask install vagrant
+```
+
+
 ### How it works
 
 1. A simple `pre-push` hook prevents direct pushes into the trunk branch
