@@ -2,6 +2,12 @@
 
 An example project based on the idea from the Chromium commit queue to prevent the trunk ever being red while still allowing everyone to work on the trunk branch.
 
+![alt terminal](https://raw.githubusercontent.com/danrspencer/commit-queue/master/docs/terminal.png)
+
+![alt concourse](https://raw.githubusercontent.com/danrspencer/commit-queue/master/docs/concourse.png)
+
+![alt slack](https://raw.githubusercontent.com/danrspencer/commit-queue/master/docs/slack.png)
+
 ## Quick Start
 
 Quickly bootstrap your project with Concourse and the Commit Queue pipeline by running the `bootstrap.sh` in your project root.
@@ -51,9 +57,3 @@ $ make
 1. Concourse picks up the new branch validates it by running tests, linting, etc..
     1. If it passes then merges the commits into master and deletes the branch
     1. If it fails it leaves branch in place so it can be more easily diagnosed and alerts the team via Slack
-
-![alt terminal](https://raw.githubusercontent.com/danrspencer/commit-queue/master/docs/terminal.png)
-
-![alt concourse](https://raw.githubusercontent.com/danrspencer/commit-queue/master/docs/concourse.png)
-
-![alt slack](https://raw.githubusercontent.com/danrspencer/commit-queue/master/docs/slack.png)
