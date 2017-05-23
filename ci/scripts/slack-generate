@@ -45,4 +45,7 @@ PAYLOAD="payload={
 
 PROJECT_ROOT=`git rev-parse --show-toplevel`
 
+echo "Slack message generated: "
+echo ${PAYLOAD}
+
 echo "${PAYLOAD}" > ${PROJECT_ROOT}/../slack-payload/payload.json
