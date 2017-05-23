@@ -17,7 +17,7 @@ jobs:
         slack-channel: {{slack-channel}}
         build-result: failure
         target-branch: {{main-branch}}
-    - task: run
+    - task: slack-send
       file: branch/ci/tasks/slack-send.yml
       params:
         slack-url: {{slack-url}}
@@ -37,7 +37,7 @@ jobs:
   - put: {{main-branch}}
     params:
       repository: branch
-  - task: run
+  - task: slack-send
     file: branch/ci/tasks/slack-send.yml
     params:
       slack-url: {{slack-url}}
