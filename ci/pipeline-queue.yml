@@ -34,6 +34,7 @@ jobs:
       slack-channel: {{slack-channel}}
       build-result: success
       target-branch: {{main-branch}}
+      git-web-url: {{git-web-url}}
   - put: {{main-branch}}
     params:
       repository: branch

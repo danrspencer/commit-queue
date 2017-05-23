@@ -14,7 +14,7 @@ SSH_KEY_PATH=~/.ssh/id_rsa
 LIVE_URL=https://ci.concourse.ci
 # --------------------
 
-init: vagrant-up download-fly config pipeline unpause-pipeline browse-dev
+init: vagrant-up download-fly config pipeline commit-queue browse-dev
 
 # Dev
 login:
@@ -29,9 +29,9 @@ pipeline: login
 									 --var "git-repo=${GIT_REPO}" \
 									 --var "git-web-url=${GIT_WEB_URL}"
 
-commit-queue: login
+pipeline-queue: login
 	./fly --target ${TARGET} set-pipeline --pipeline ${PIPELINE_NAME}_queue \
-									 --config commit-queue.yml \
+									 --config pipeline-queue.yml \
 									 --load-vars-from config-${TARGET}.yml \
 									 --var "private-repo-key=`cat ${SSH_KEY_PATH}`" \
 									 --var "main-branch=${BRANCH}" \
@@ -64,9 +64,6 @@ download-fly-win: OS=windows
 config:
 	cp -n ./config.yml.sample ./config-dev.yml || true
 	cp -n ./config.yml.sample ./config-live.yml || true
-
-unpause-pipeline:
-	./fly --target ${TARGET} unpause-pipeline --pipeline ${PIPELINE_NAME}
 
 browse-dev:
 	open http://192.168.100.4:8080/teams/main/login

@@ -5,12 +5,12 @@ set -e
 SLACK_CHANNEL=`printenv slack-channel`
 BUILD_RESULT=`printenv build-result`
 
-GITHUB_URL=`printenv github-url`
+GIT_WEB_URL=`printenv git-web-url`
 
 TARGET_BRANCH=`printenv target-branch`
-TARGET_BRANCH_URL=${GITHUB_URL}/tree/${TARGET_BRANCH}
+TARGET_BRANCH_URL=${GIT_WEB_URL}/tree/${TARGET_BRANCH}
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
-CURRENT_BRANCH_URL=${GITHUB_URL}/tree/${CURRENT_BRANCH}
+CURRENT_BRANCH_URL=${GIT_WEB_URL}/tree/${CURRENT_BRANCH}
 
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 # Not sure we need these lines, delete them if it still works
