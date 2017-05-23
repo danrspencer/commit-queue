@@ -52,6 +52,14 @@ jobs:
     params:
       private-repo-key: {{private-repo-key}}
 
+- name: delete-branch
+  plan:
+  - get: branch
+  - task: run
+    file: branch/ci/tasks/cleanup-branch.yml
+    params:
+      private-repo-key: {{private-repo-key}}
+
 resources:
 - name: branch
   type: git-multibranch
