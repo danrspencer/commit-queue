@@ -11,5 +11,5 @@ resources:
   type: git
   source:
     uri: {{git-repo}}
-    branches: master
+    branches: {{branch}}
     private_key: {{private-repo-key}}
