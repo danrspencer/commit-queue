@@ -43,7 +43,7 @@ live-pipeline: TARGET=live
 live-pipeline: live-login pipeline
 
 live-pipeline-queue: TARGET=live
-live-pipeline-queue: live-login pipeline
+live-pipeline-queue: live-login pipeline-queue
 
 # Setup
 vagrant-up:
