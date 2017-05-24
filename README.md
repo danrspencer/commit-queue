@@ -29,6 +29,13 @@ To push using the queue run `push-to-queue`. Optionally you can pass command arg
 push-to-queue -am "adding all the files, setting commit msg and pushing!"
 ```
 
+Optionally run `make setup-quick-push-script` to setup a shortcut to the push script as `p2q`.
+
+```
+make setup-quick-push-script
+p2q -am "testing out the shiny new shortcut version of push-to-queue"
+```
+
 ## Manual Setup
 
 #### Scripts
@@ -36,9 +43,7 @@ push-to-queue -am "adding all the files, setting commit msg and pushing!"
 Copy the `ci`, `scripts` and `Makefile` into your project, then run `make` in the root of the project to setup the `pre-push` hook and the `push-to-queue` script.
 ```
 make
-```
-
-Optionally run `make setup-quick-push-script` to setup a shortcut to the push script as `p2q`. 
+``` 
 
 #### Concourse
  
