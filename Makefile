@@ -4,10 +4,7 @@ setup-pre-push:
 	cp ./scripts/pre-push ./.git/hooks/
 
 setup-push-script:
-	cp ./scripts/push-to-queue /usr/local/bin/
-
-setup-quick-push-script:
-	cp ./scripts/push-to-queue /usr/local/bin/p2q
+	cp ./scripts/p2q /usr/local/bin/
 
 disable-pre-push:
 	@echo

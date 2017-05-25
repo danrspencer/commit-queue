@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -e
+
+# This file is to facilitate ensuring the most recent push-to-queue
+# script contained in the project is always ran
+
+PROJECT_ROOT=`git rev-parse --show-toplevel`
+
+${PROJECT_ROOT}/scripts/push-to-queue "$*"

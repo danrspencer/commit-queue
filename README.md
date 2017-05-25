@@ -26,21 +26,14 @@ brew cask install vagrant
 To push using the queue run `push-to-queue`. Optionally you can pass command arguments to the script which are forwarded to `git commit`, e.g.
 
 ```
-push-to-queue -am "adding all the files, setting commit msg and pushing!"
-```
-
-Optionally run `make setup-quick-push-script` to setup a shortcut to the push script as `p2q`.
-
-```
-make setup-quick-push-script
-p2q -am "testing out the shiny new shortcut version of push-to-queue"
+p2q -am "adding all the files, setting commit msg and pushing!"
 ```
 
 ## Manual Setup
 
 #### Scripts
 
-Copy the `ci`, `scripts` and `Makefile` into your project, then run `make` in the root of the project to setup the `pre-push` hook and the `push-to-queue` script.
+Copy the `ci`, `scripts` and `Makefile` into your project, then run `make` in the root of the project to setup the `pre-push` hook and the "push to queue" (`p2q`) script.
 ```
 make
 ``` 
@@ -58,7 +51,7 @@ make
 ## How it works
 
 1. A simple `pre-push` hook prevents direct pushes into the trunk branch
-1. The bash script, `push-to-queue`, handles creating and pushes new unique branch
+1. The bash script, `p2q`, handles creating and pushes new unique branch
 1. Concourse picks up the new branch validates it by running tests, linting, etc..
     1. If it passes then merges the commits into master and deletes the branch
     1. If it fails it leaves branch in place so it can be more easily diagnosed and alerts the team via Slack

@@ -10,9 +10,7 @@ TARGET_BRANCH=`printenv target-branch`
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
 
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
-# Not sure we need these lines, delete them if it still works
 git fetch origin
-#git checkout ${TARGET_BRANCH}
 
 if [[ ${BUILD_RESULT} == "success" ]]
 then
