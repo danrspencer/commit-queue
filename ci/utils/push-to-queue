@@ -15,7 +15,7 @@ fi
 
 echo
 echo -e "\033[1;34mPulling 'origin/${CURRENT_BRANCH}' into local branch... \033[0m"
-git pull --rebase
+git pull --rebase --autostash
 
 if [[ -z `git cherry origin/${CURRENT_BRANCH}` ]]
 then

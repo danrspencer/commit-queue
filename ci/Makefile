@@ -8,16 +8,18 @@
 PIPELINE_NAME=`git remote -v | grep fetch | head -n 1 | sed 's/.*\/\(.*\)\..*/\1/'`
 GIT_REPO=`git remote -v | grep fetch | head -n 1 | awk '{print $$2}'`
 BRANCH=`git branch | grep \* | awk '{print $$2}'`
+PROJECT_NAME=`git remote -v | grep fetch | head -n 1 | sed 's/.*:\(.*\)\..*/\1/'`
 
 SSH_KEY_PATH=~/.ssh/id_rsa
 LIVE_URL=https://ci.concourse.ci
+TEAM_NAME=main
 # --------------------
 
 init: vagrant-up download-fly config pipeline commit-queue browse-dev
 
 # Dev
 login:
-	./fly --target ${TARGET} login --concourse-url ${URL}
+	./fly --target ${TARGET} login --concourse-url ${URL} --team-name ${TEAM_NAME}
 
 pipeline: login
 	./fly --target ${TARGET} set-pipeline --pipeline ${PIPELINE_NAME} \
@@ -32,7 +34,9 @@ pipeline-queue: login
 									 --load-vars-from config-${TARGET}.yml \
 									 --var "private-repo-key=`cat ${SSH_KEY_PATH}`" \
 									 --var "main-branch=${BRANCH}" \
-									 --var "git-repo=${GIT_REPO}"
+									 --var "git-repo=${GIT_REPO}" \
+									 --var "project-name=${PROJECT_NAME}" \
+									 --var "concourse-url=${URL}"
 
 # Live
 live-login: TARGET=live

@@ -4,7 +4,8 @@ set -e
 
 BUILD_RESULT=`printenv build-result`
 
-GIT_WEB_URL=`git remote -v | grep fetch | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2/'`
+GIT_REPO=`git remote -v | grep fetch | head -n 1 | sed 's/.*:\(.*\)\..*/\1/'`
+GIT_WEB_URL=`git remote -v | grep push | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2/'`
 
 TARGET_BRANCH=`printenv target-branch`
 CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
@@ -16,9 +17,11 @@ if [[ ${BUILD_RESULT} == "success" ]]
 then
     MESSAGE="Successfully pushed into <${GIT_WEB_URL}/tree/${TARGET_BRANCH}|'origin/${TARGET_BRANCH}'>"
     COLOR="36a64f"
+    ICON_URL="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Raw_egg.jpg/1200px-Raw_egg.jpg"
 else
     MESSAGE="Failed to push <${GIT_WEB_URL}/tree/${CURRENT_BRANCH}|'${CURRENT_BRANCH}'> into <${GIT_WEB_URL}/tree/${TARGET_BRANCH}|'origin/${TARGET_BRANCH}'>"
     COLOR="ff0000"
+    ICON_URL="http://s3.amazonaws.com/spoonuniversi-wpengine/spoonuniversi/wp-content/uploads/sites/34/2016/01/17248973665_4fae275bf9_o-670x516.jpg"
 fi
 
 COMMITS=`git log --pretty=format:"%ct %H %ae %s" origin/${TARGET_BRANCH}..${CURRENT_BRANCH} \
@@ -32,8 +35,8 @@ COMMITS=`git log --pretty=format:"%ct %H %ae %s" origin/${TARGET_BRANCH}..${CURR
 
 PAYLOAD="payload={
     \"text\": \"${MESSAGE}\",
-    \"username\": \"commit-bot\",
-    \"icon_emoji\": \":robot_face:\",
+    \"username\": \"${GIT_REPO}\",
+    \"icon_url\": \"${ICON_URL}\",
     \"attachments\": [
         ${COMMITS%?}
     ]

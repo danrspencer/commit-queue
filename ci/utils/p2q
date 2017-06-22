@@ -6,5 +6,6 @@ set -e
 # script contained in the project is always ran
 
 PROJECT_ROOT=`git rev-parse --show-toplevel`
+SCRIPT_PATH=`find ${PROJECT_ROOT} -name push-to-queue`
 
-${PROJECT_ROOT}/scripts/push-to-queue "$*"
+${SCRIPT_PATH} "$*"

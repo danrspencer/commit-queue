@@ -1,10 +1,10 @@
 setup: setup-pre-push setup-push-script
 
 setup-pre-push:
-	cp ./scripts/pre-push ./.git/hooks/
+	cp ./ci/utils/pre-push ./.git/hooks/
 
 setup-push-script:
-	cp ./scripts/p2q /usr/local/bin/
+	cp ./ci/utils/p2q /usr/local/bin/
 
 disable-pre-push:
 	@echo

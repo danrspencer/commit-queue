@@ -1,6 +1,11 @@
 jobs:
 - name: validation
   plan:
+  - put: slack
+    params:
+      channel: commit-queue
+      text: |
+          Started <(concourse-url)/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|build> of ((project-name))
   - get: branch
     trigger: true
   - aggregate:
@@ -13,7 +18,7 @@ jobs:
     - task: generate-slack-message
       file: branch/ci/tasks/slack-generate.yml
       params:
-        private-repo-key: {{private-repo-key}}
+        private-repo-key: ((private-repo-key))
         build-result: failure
         target-branch: {{main-branch}}
     - task: slack-send
@@ -50,14 +55,6 @@ jobs:
     params:
       private-repo-key: {{private-repo-key}}
 
-- name: delete-branch
-  plan:
-  - get: branch
-  - task: run
-    file: branch/ci/tasks/cleanup-branch.yml
-    params:
-      private-repo-key: {{private-repo-key}}
-
 resources:
 - name: branch
   type: git-multibranch
@@ -73,9 +70,21 @@ resources:
     branch: {{main-branch}}
     private_key: {{private-repo-key}}
 
+- name: slack
+  type: slack
+  source:
+    repository: {{slack-url}}
+
+
 resource_types:
 - name: git-multibranch
   type: docker-image
   source:
     repository: cfcommunity/git-multibranch-resource
+    tag: latest
+
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
     tag: latest
