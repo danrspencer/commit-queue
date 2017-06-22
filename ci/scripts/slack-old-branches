@@ -25,7 +25,7 @@ for BRANCH in $(git branch -r | sed /\*/d); do
                    { print "    \"title\": \"'${BRANCH}'""\"," }
                    { print "    \"footer\": \"By " $3 " \"," }
                    { print "    \"ts\": \"" $1 "\"," }
-      { $1=$2=$3=""; print "    \"text\": \"*Last commit:* " $0\n    "\"" }
+      { $1=$2=$3=""; print "    \"text\": \"*Last commit:* " $0"\"" }
                    { print "}," }'`
     fi
 done
