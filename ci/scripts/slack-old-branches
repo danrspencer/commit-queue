@@ -23,9 +23,9 @@ for BRANCH in $(git branch -r | sed /\*/d); do
                    { print "    \"color\": \"'${COLOR}'\"," }
                    { print "    \"title_link\": \"'${GIT_WEB_URL}'/tree/'${BRANCH}'""\"," }
                    { print "    \"title\": \"'${BRANCH}'""\"," }
-                   { print "    \"author_name\": \"" $3 "\"," }
+                   { print "    \"footer\": \"By " $3 " \"," }
                    { print "    \"ts\": \"" $1 "\"," }
-      { $1=$2=$3=""; print "    \"text\": \"Last commit: " $0 "\"" }
+      { $1=$2=$3=""; print "    \"text\": \"*Last commit:* " $0\n    "\"" }
                    { print "}," }'`
     fi
 done
