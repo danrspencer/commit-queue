@@ -7,14 +7,14 @@ jobs:
     file: pending/ci/tasks/slack-commits.yml
     params:
       private-repo-key: ((private-repo-key))
-      target-branch: ((main-branch))
+      target-branch: "master"
   - put: slack
     params:
       username: ((project-name))
       icon_url: ((slack-image))
       text: |
           *<((concourse-url))/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|Validating pending commits...>*
-      attachments_file: slack-payload/payload.json
+      attachments_file: slack-payload/commits.json
   - aggregate:
     - task: unit-tests
       file: pending/ci/tasks/placeholder.yml
@@ -38,7 +38,7 @@ jobs:
   - get: pending
     trigger: true
     passed: [ validation ]
-  - put: ((project-name))
+  - put: master
     params:
       repository: pending
   - put: slack
@@ -58,7 +58,7 @@ jobs:
         title: Push failed!
         text: <((concourse-url))/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|Merge failure...>
 
-- name: cleanup-branch
+- name: cleanup-pending
   plan:
   - get: pending
     trigger: true
@@ -66,22 +66,41 @@ jobs:
   - task: run
     file: pending/ci/tasks/cleanup-branch.yml
     params:
+      private-repo-key: {{private-repo-key}}
+
+- name: cleanup-branches
+  plan:
+  - get: master
+  - task: run
+    file: master/ci/tasks/slack-old-branches.yml
+    params:
+      branch-age: "2 days ago"
+      branch-regex: ((pending-branches))
+      color: "#f49542"
+      output: "warning.json"
       private-repo-key: ((private-repo-key))
+  - put: slack
+    params:
+      username: ((project-name))
+      icon_url: ((slack-image))
+      text: |
+          *The following branches will be deleted tomorrow...*
+      attachments_file: slack-payload/warning.json
 
 resources:
 - name: pending
   type: git-multibranch
   source:
     uri: ((git-repo))
-    branches: .*-pending-\d*
+    branches: ((pending-branches))
     private_key: ((private-repo-key))
 
 
-- name: ((project-name))
+- name: master
   type: git-multibranch
   source:
     uri: ((git-repo))
-    branch: ((main-branch))
+    branch: master
     private_key: ((private-repo-key))
 
 - name: slack

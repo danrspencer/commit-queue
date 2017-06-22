@@ -34,7 +34,7 @@ pipeline-queue: login
 									 --config pipeline-queue.yml \
 									 --load-vars-from config-${TARGET}.yml \
 									 --var "private-repo-key=`cat ${SSH_KEY_PATH}`" \
-									 --var "main-branch=${BRANCH}" \
+									 --var "pending-branches=${BRANCH}-pending-\d*" \
 									 --var "git-repo=${GIT_REPO}" \
 									 --var "project-name=${PROJECT_NAME}" \
 									 --var "git-web-url=${GIT_WEB_URL}" \

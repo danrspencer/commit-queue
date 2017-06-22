@@ -2,8 +2,6 @@
 
 set -e
 
-#BUILD_RESULT=`printenv build-result`
-
 GIT_REPO=`git remote -v | grep fetch | head -n 1 | sed 's/.*:\(.*\)\..*/\1/'`
 GIT_WEB_URL=`git remote -v | grep push | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2/'`
 
@@ -12,15 +10,6 @@ CURRENT_BRANCH=`git branch | grep pending | awk '{print $1}'`
 
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
-
-#if [[ ${BUILD_RESULT} == "success" ]]
-#then
-#    MESSAGE="Successfully pushed into <${GIT_WEB_URL}/tree/${TARGET_BRANCH}|'origin/${TARGET_BRANCH}'>"
-#    COLOR="36a64f"
-#else
-#    MESSAGE="Failed to push <${GIT_WEB_URL}/tree/${CURRENT_BRANCH}|'${CURRENT_BRANCH}'> into <${GIT_WEB_URL}/tree/${TARGET_BRANCH}|'origin/${TARGET_BRANCH}'>"
-#    COLOR="ff0000"
-#fi
 
 COMMITS=`git log --pretty=format:"%ct %H %ae %s" origin/${TARGET_BRANCH}..${CURRENT_BRANCH} \
             | awk '{ print "{" }
@@ -33,7 +22,7 @@ COMMITS=`git log --pretty=format:"%ct %H %ae %s" origin/${TARGET_BRANCH}..${CURR
 
 PAYLOAD="[
     {
-        \"color\": \"#4286f4\",
+        \"color\": \"#f49542\",
         \"title\": \"<${GIT_WEB_URL}/tree/${CURRENT_BRANCH}|'${CURRENT_BRANCH}'> into <${GIT_WEB_URL}/tree/${TARGET_BRANCH}|'${TARGET_BRANCH}'>\"
     },
     ${COMMITS%?}
@@ -41,9 +30,9 @@ PAYLOAD="[
 
 PROJECT_ROOT=`git rev-parse --show-toplevel`
 
-echo "Slack message generated: "
+echo "Slack attachment generated: "
 echo
 echo "${PAYLOAD}"
 echo
 
-echo "${PAYLOAD}" > ${PROJECT_ROOT}/../slack-payload/payload.json
+echo "${PAYLOAD}" > ${PROJECT_ROOT}/../slack-payload/commits.json
