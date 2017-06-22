@@ -33,7 +33,8 @@ COMMITS=`git log --pretty=format:"%ct %H %ae %s" origin/${TARGET_BRANCH}..${CURR
 
 PAYLOAD="[
     {
-        \"title\": \"<${GIT_WEB_URL}/tree/${CURRENT_BRANCH}|'${CURRENT_BRANCH}'>   :arrow_right: :arrow_right: :arrow_right:   <${GIT_WEB_URL}/tree/${TARGET_BRANCH}|'origin/${TARGET_BRANCH}'>\"
+        \"color\": \"#4286f4\",
+        \"title\": \"<${GIT_WEB_URL}/tree/${CURRENT_BRANCH}|'${CURRENT_BRANCH}'> into <${GIT_WEB_URL}/tree/${TARGET_BRANCH}|'${TARGET_BRANCH}'>\"
     },
     ${COMMITS%?}
 ]"
