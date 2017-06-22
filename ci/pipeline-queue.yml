@@ -72,6 +72,8 @@ jobs:
   plan:
   - get: master
   - task: test
+    params:
+      private-repo-key: ((private-repo-key))
     config:
       platform: linux
 
@@ -89,11 +91,14 @@ jobs:
         args:
         - -exc
         - |
-          git --version
+          ci/scripts/setup-ssh
+          git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+          git fetch origin
+          git branch --all
   - task: run
     file: master/ci/tasks/slack-old-branches.yml
     params:
-      branch-age: "2 days ago"
+      branch-age: "1 hour ago"
       branch-regex: ((pending-branches))
       color: "#f49542"
       output: "warning.json"
