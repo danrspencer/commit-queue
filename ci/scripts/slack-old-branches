@@ -23,7 +23,7 @@ for BRANCH in $(git branch -r | sed /\*/d); do
                    { print "    \"color\": \"'${COLOR}'\"," }
                    { print "    \"title_link\": \"'${GIT_WEB_URL}'/tree/'${BRANCH}'""\"," }
                    { print "    \"title\": \"'${BRANCH}'""\"," }
-                   { print "    \"footer\": \"" $3 " \"," }
+                   { print "    \"footer\": \"By " $3 " \"," }
                    { print "    \"ts\": \"" $1 "\"," }
       { $1=$2=$3=""; print "    \"text\": \"" $0"\"" }
                    { print "}," }'`
