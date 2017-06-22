@@ -42,10 +42,11 @@ jobs:
   - put: ((project-name))
     params:
       repository: pending
-  - task: slack-send
-    file: pending/ci/tasks/slack-send.yml
+  - put: slack
     params:
-      slack-url: ((slack-url))
+      username: ((project-name))
+      icon_url: ((slack-image))
+      text: SUCCESS
 
 #- name: cleanup-branch
 #  plan:
