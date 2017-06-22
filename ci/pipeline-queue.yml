@@ -90,7 +90,6 @@ jobs:
         - -exc
         - |
           git --version
-          git branch --sort=-committerdate
   - task: run
     file: master/ci/tasks/slack-old-branches.yml
     params:
