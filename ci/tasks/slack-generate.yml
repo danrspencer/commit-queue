@@ -8,13 +8,13 @@ image_resource:
     repository: governmentpaas/git-ssh
 
 inputs:
-- name: branch
+- name: pending
 
 outputs:
 - name: slack-payload
 
 run:
-  dir: branch
+  dir: pending
   path: sh
   args:
   - -exc

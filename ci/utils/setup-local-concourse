@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+LOCAL_URL=http://192.168.100.4:8080/
+
+# Install Vagrant
+vagrant --version > /dev/null 2>&1
+if [ $? != 0 ]
+then
+    brew cask install virtualbox
+    brew cask install vagrant
+fi
+
+# Init Vagrant
+ls Vagrantfile > /dev/null 2>&1
+if [ $? != 0 ]
+then
+    vagrant init concourse/lite
+fi
+
+# Start the Vagrant
+curl -m 1 ${LOCAL_URL} > /dev/null 2>&1
+if [ $? != 0 ]
+then
+    vagrant up
+fi
+
+# Download Fly
+ls fly > /dev/null 2>&1
+if [ $? != 0 ]
+then
+    ./util/retry curl --user concourse:concourse -o fly "${LOCAL_URL}api/v1/cli?arch=amd64&platform=darwin" -m 30
+	chmod +x fly
+fi
+
+# Setup config files
+ls config-dev.yml > /dev/null 2>&1
+if [ $? != 0 ]
+then
+    cp -n ./config.yml.sample ./config-dev.yml
+fi
+
+ls config-live.yml > /dev/null 2>&1
+if [ $? != 0 ]
+then
+    cp -n ./config.yml.sample ./config-live.yml
+fi

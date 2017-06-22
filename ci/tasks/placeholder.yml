@@ -12,7 +12,7 @@ image_resource:
     repository: alpine
 
 inputs:
-- name: branch
+- name: pending
 
 run:
   path: echo

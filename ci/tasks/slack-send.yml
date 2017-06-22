@@ -9,8 +9,8 @@ image_resource:
 
 inputs:
 - name: slack-payload
-- name: branch
+- name: pending
 
 run:
   path: ci/scripts/slack-send
-  dir: branch
+  dir: pending

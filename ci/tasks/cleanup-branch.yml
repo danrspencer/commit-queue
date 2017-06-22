@@ -8,10 +8,10 @@ image_resource:
     repository: governmentpaas/git-ssh
 
 inputs:
-- name: branch
+- name: pending
 
 run:
-  dir: branch
+  dir: pending
   path: sh
   args:
   - -exc

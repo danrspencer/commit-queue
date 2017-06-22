@@ -1,69 +1,72 @@
 jobs:
 - name: validation
   plan:
+  - get: pending
+    trigger: true
+  - task: generate-slack-message
+    file: pending/ci/tasks/slack-generate.yml
+    params:
+      private-repo-key: {{private-repo-key}}
+      build-result: failure
+      target-branch: {{main-branch}}
   - put: slack
     params:
+      username: {{project-name}}
+      icon_url: {{slack-image}}
       channel: commit-queue
       text: |
-          Started <(concourse-url)/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|build> of ((project-name))
-  - get: branch
-    trigger: true
+          <{{concourse-url}}/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|Validating pending commits...> (build: $BUILD_NAME)
+      #attachments_file: slack-payload/payload.json
   - aggregate:
     - task: unit-tests
-      file: branch/ci/tasks/placeholder.yml
+      file: pending/ci/tasks/placeholder.yml
     - task: linting
-      file: branch/ci/tasks/placeholder.yml
+      file: pending/ci/tasks/placeholder.yml
   on_failure:
     do:
-    - task: generate-slack-message
-      file: branch/ci/tasks/slack-generate.yml
-      params:
-        private-repo-key: ((private-repo-key))
-        build-result: failure
-        target-branch: {{main-branch}}
     - task: slack-send
-      file: branch/ci/tasks/slack-send.yml
+      file: pending/ci/tasks/slack-send.yml
       params:
         slack-url: {{slack-url}}
 
 - name: merge-commits
   plan:
-  - get: branch
+  - get: pending
     trigger: true
     passed: [ validation ]
   - task: generate-slack-message
-    file: branch/ci/tasks/slack-generate.yml
+    file: pending/ci/tasks/slack-generate.yml
     params:
       private-repo-key: {{private-repo-key}}
       build-result: success
       target-branch: {{main-branch}}
-  - put: {{main-branch}}
+  - put: {{project-name}}
     params:
-      repository: branch
+      repository: pending
   - task: slack-send
-    file: branch/ci/tasks/slack-send.yml
+    file: pending/ci/tasks/slack-send.yml
     params:
       slack-url: {{slack-url}}
 
-- name: cleanup-branch
-  plan:
-  - get: branch
-    trigger: true
-    passed: [ merge-commits ]
-  - task: run
-    file: branch/ci/tasks/cleanup-branch.yml
-    params:
-      private-repo-key: {{private-repo-key}}
+#- name: cleanup-branch
+#  plan:
+#  - get: pending
+#    trigger: true
+#    passed: [ merge-commits ]
+#  - task: run
+#    file: pending/ci/tasks/cleanup-branch.yml
+#    params:
+#      private-repo-key: {{private-repo-key}}
 
 resources:
-- name: branch
+- name: pending
   type: git-multibranch
   source:
     uri: {{git-repo}}
     branches: .*-pending-\d*
     private_key: {{private-repo-key}}
 
-- name: {{main-branch}}
+- name: {{project-name}}
   type: git-multibranch
   source:
     uri: {{git-repo}}
@@ -71,10 +74,9 @@ resources:
     private_key: {{private-repo-key}}
 
 - name: slack
-  type: slack
+  type: slack-notification
   source:
-    repository: {{slack-url}}
-
+    url: {{slack-url}}
 
 resource_types:
 - name: git-multibranch

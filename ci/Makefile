@@ -9,9 +9,10 @@ PIPELINE_NAME=`git remote -v | grep fetch | head -n 1 | sed 's/.*\/\(.*\)\..*/\1
 GIT_REPO=`git remote -v | grep fetch | head -n 1 | awk '{print $$2}'`
 BRANCH=`git branch | grep \* | awk '{print $$2}'`
 PROJECT_NAME=`git remote -v | grep fetch | head -n 1 | sed 's/.*:\(.*\)\..*/\1/'`
+GIT_WEB_URL=`git remote -v | grep push | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2/'`
 
 SSH_KEY_PATH=~/.ssh/id_rsa
-LIVE_URL=https://ci.concourse.ci
+LIVE_URL=https://ec2-concourse.anaplan-np.net
 TEAM_NAME=main
 # --------------------
 
@@ -19,7 +20,7 @@ init: vagrant-up download-fly config pipeline commit-queue browse-dev
 
 # Dev
 login:
-	./fly --target ${TARGET} login --concourse-url ${URL} --team-name ${TEAM_NAME}
+	./fly --target ${TARGET} login --concourse-url ${URL} --team-name ${TEAM_NAME} --insecure
 
 pipeline: login
 	./fly --target ${TARGET} set-pipeline --pipeline ${PIPELINE_NAME} \
@@ -36,6 +37,7 @@ pipeline-queue: login
 									 --var "main-branch=${BRANCH}" \
 									 --var "git-repo=${GIT_REPO}" \
 									 --var "project-name=${PROJECT_NAME}" \
+									 --var "git-web-url=${GIT_WEB_URL}" \
 									 --var "concourse-url=${URL}"
 
 # Live
