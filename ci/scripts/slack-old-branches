@@ -11,7 +11,7 @@ git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
 
 for BRANCH in $(git branch -r | sed /\*/d); do
-    if [ -n "`git log -1 --before="${AGE}" -s $BRANCH`" ] && [ -n "`echo ${BRANCH} | grep "${REGEX}"`" ]; then
+    if [ -z "`git log -1 --before="${AGE}" -s ${BRANCH}`" ] && [ -z "`echo ${BRANCH} | grep "${REGEX}"`" ]; then
         BRANCHES+=`git log -1 --pretty=format:"%cr" -s ${BRANCH} \
             | awk '{ print "{" }
                    { print "    \"color\": \"'${COLOUR}'\"," }
