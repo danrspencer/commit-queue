@@ -71,34 +71,10 @@ jobs:
 - name: cleanup-branches
   plan:
   - get: master
-  - task: test
-    params:
-      private-repo-key: ((private-repo-key))
-    config:
-      platform: linux
-
-      image_resource:
-        type: docker-image
-        source:
-          repository: governmentpaas/git-ssh
-
-      inputs:
-      - name: master
-
-      run:
-        dir: master
-        path: sh
-        args:
-        - -exc
-        - |
-          ci/scripts/setup-ssh
-          git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
-          git fetch origin
-          git branch --all
   - task: run
     file: master/ci/tasks/slack-old-branches.yml
     params:
-      branch-age: "1 hour ago"
+      branch-age: "2 days ago"
       branch-regex: ((pending-branches))
       color: "#f49542"
       output: "warning.json"
