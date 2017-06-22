@@ -20,4 +20,4 @@ run:
   - -exc
   - |
     ci/scripts/setup-ssh
-    ci/scripts/slack-generate
+    ci/scripts/slack-commits

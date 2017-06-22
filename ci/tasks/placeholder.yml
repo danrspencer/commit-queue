@@ -17,4 +17,4 @@ inputs:
 run:
   path: echo
   args:
-    - "placeholder"
+  - "placeholder"

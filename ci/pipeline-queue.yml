@@ -4,7 +4,7 @@ jobs:
   - get: pending
     trigger: true
   - task: generate-slack-message
-    file: pending/ci/tasks/slack-generate.yml
+    file: pending/ci/tasks/slack-commits.yml
     params:
       private-repo-key: ((private-repo-key))
       target-branch: ((main-branch))
@@ -20,25 +20,24 @@ jobs:
       file: pending/ci/tasks/placeholder.yml
     - task: linting
       file: pending/ci/tasks/placeholder.yml
+#    Uncomment below to test your failure state
+#    - task: fail
+#      file: pending/ci/tasks/fail.yml
   on_failure:
-    do:
-    - put: slack
-      params:
-        username: ((project-name))
-        icon_url: ((slack-image))
-        text: FAILED
+    put: slack
+    params:
+      username: ((project-name))
+      icon_url: ((slack-image))
+      attachments:
+      - color: "#ff0000"
+        title: Push failed!
+        text: <((concourse-url))/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|Validation failure...>
 
 - name: merge-commits
   plan:
   - get: pending
     trigger: true
     passed: [ validation ]
-  - task: generate-slack-message
-    file: pending/ci/tasks/slack-generate.yml
-    params:
-      private-repo-key: ((private-repo-key))
-      build-result: success
-      target-branch: ((main-branch))
   - put: ((project-name))
     params:
       repository: pending
@@ -46,7 +45,18 @@ jobs:
     params:
       username: ((project-name))
       icon_url: ((slack-image))
-      text: SUCCESS
+      attachments:
+      - color: "#36a64f"
+        title: Push succeeded!
+  on_failure:
+    put: slack
+    params:
+      username: ((project-name))
+      icon_url: ((slack-image))
+      attachments:
+      - color: "#ff0000"
+        title: Push failed!
+        text: <((concourse-url))/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|Merge failure...>
 
 #- name: cleanup-branch
 #  plan:
