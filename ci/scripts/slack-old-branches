@@ -6,20 +6,18 @@ COLOR=`printenv color`
 OUTPUT=`printenv output`
 
 # For Testing
-#AGE="2 days ago"
-#REGEX="master-pending-\d"
-#COLOR=""
+AGE="2 days ago"
+REGEX="master-pending-\d"
+COLOR=""
 
 GIT_WEB_URL=`git remote -v | grep push | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2/'`
 
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
 
-# && [ -z "`echo ${BRANCH} | grep ".*${REGEX}"`" ]
-
 for BRANCH in $(git branch -r | sed /\*/d); do
-    if [ -z "`git log -1 --after="${AGE}" -s ${BRANCH}`" ]; then
-        BRANCHES+=`git log --pretty=format:"%ct %H %ae %s" -s ${BRANCH} \
+    if [ -z "`git log -1 --after="${AGE}" -s ${BRANCH}`" ] && [ ! -z "`echo ${BRANCH} | grep ${REGEX}`" ]; then
+        BRANCHES+=`git log -1 --pretty=format:"%ct %H %ae %s" -s ${BRANCH} \
             | awk '{ print "{" }
                    { print "    \"color\": \"'${COLOR}'\"," }
                    { print "    \"title_link\": \"'${GIT_WEB_URL}'/tree/'${BRANCH}'""\"," }
@@ -27,15 +25,6 @@ for BRANCH in $(git branch -r | sed /\*/d); do
                    { print "    \"author_name\": \"" $3 "\"," }
                    { print "    \"ts\": \"" $1 "\"," }
       { $1=$2=$3=""; print "    \"text\": \"Last commit: " $0 "\"" }
-                   { print "}," }'`
-
-                   COMMITS=`git log --pretty=format:"%ct %H %ae %s" origin/${TARGET_BRANCH}..${CURRENT_BRANCH} \
-            | awk '{ print "{" }
-                   { print "    \"color\": \"#f49542\"," }
-                   { print "    \"ts\": \"" $1 "\"," }
-                   { print "    \"author_name\": \"" $3 "\"," }
-                   { print "    \"title_link\": \"'${GIT_WEB_URL}'/commit/" $2 "\"," }
-
                    { print "}," }'`
     fi
 done
@@ -51,4 +40,4 @@ echo
 echo "${PAYLOAD}"
 echo
 
-echo "${PAYLOAD}" > ${PROJECT_ROOT}/../slack-payload/${OUTPUT}
+#echo "${PAYLOAD}" > ${PROJECT_ROOT}/../slack-payload/${OUTPUT}
