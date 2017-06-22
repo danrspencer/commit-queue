@@ -7,15 +7,13 @@ jobs:
     file: pending/ci/tasks/slack-generate.yml
     params:
       private-repo-key: ((private-repo-key))
-      build-result: failure
       target-branch: ((main-branch))
   - put: slack
     params:
       username: ((project-name))
       icon_url: ((slack-image))
-      channel: commit-queue
       text: |
-          <((concourse-url))/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|Validating pending commits...> (build: $BUILD_NAME)
+          <((concourse-url))/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|Validating pending commits...>
       attachments_file: slack-payload/payload.json
   - aggregate:
     - task: unit-tests
@@ -24,10 +22,11 @@ jobs:
       file: pending/ci/tasks/placeholder.yml
   on_failure:
     do:
-    - task: slack-send
-      file: pending/ci/tasks/slack-send.yml
+    - put: slack
       params:
-        slack-url: ((slack-url))
+        username: ((project-name))
+        icon_url: ((slack-image))
+        text: FAILED
 
 - name: merge-commits
   plan:
