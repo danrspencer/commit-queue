@@ -71,6 +71,26 @@ jobs:
 - name: cleanup-branches
   plan:
   - get: master
+  - task: test
+    config:
+      platform: linux
+
+      image_resource:
+        type: docker-image
+        source:
+          repository: governmentpaas/git-ssh
+
+      inputs:
+      - name: master
+
+      run:
+        dir: master
+        path: sh
+        args:
+        - -exc
+        - |
+          git --version
+          git branch --sort=-committerdate
   - task: run
     file: master/ci/tasks/slack-old-branches.yml
     params:
