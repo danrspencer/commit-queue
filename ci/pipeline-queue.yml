@@ -6,17 +6,17 @@ jobs:
   - task: generate-slack-message
     file: pending/ci/tasks/slack-generate.yml
     params:
-      private-repo-key: {{private-repo-key}}
+      private-repo-key: ((private-repo-key))
       build-result: failure
-      target-branch: {{main-branch}}
+      target-branch: ((main-branch))
   - put: slack
     params:
-      username: {{project-name}}
-      icon_url: {{slack-image}}
+      username: ((project-name))
+      icon_url: ((slack-image))
       channel: commit-queue
       text: |
-          <{{concourse-url}}/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|Validating pending commits...> (build: $BUILD_NAME)
-      #attachments_file: slack-payload/payload.json
+          <((concourse-url))/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|Validating pending commits...> (build: $BUILD_NAME)
+      attachments_file: slack-payload/payload.json
   - aggregate:
     - task: unit-tests
       file: pending/ci/tasks/placeholder.yml
@@ -27,7 +27,7 @@ jobs:
     - task: slack-send
       file: pending/ci/tasks/slack-send.yml
       params:
-        slack-url: {{slack-url}}
+        slack-url: ((slack-url))
 
 - name: merge-commits
   plan:
@@ -37,16 +37,16 @@ jobs:
   - task: generate-slack-message
     file: pending/ci/tasks/slack-generate.yml
     params:
-      private-repo-key: {{private-repo-key}}
+      private-repo-key: ((private-repo-key))
       build-result: success
-      target-branch: {{main-branch}}
-  - put: {{project-name}}
+      target-branch: ((main-branch))
+  - put: ((project-name))
     params:
       repository: pending
   - task: slack-send
     file: pending/ci/tasks/slack-send.yml
     params:
-      slack-url: {{slack-url}}
+      slack-url: ((slack-url))
 
 #- name: cleanup-branch
 #  plan:
@@ -56,27 +56,28 @@ jobs:
 #  - task: run
 #    file: pending/ci/tasks/cleanup-branch.yml
 #    params:
-#      private-repo-key: {{private-repo-key}}
+#      private-repo-key: ((private-repo-key))
 
 resources:
 - name: pending
   type: git-multibranch
   source:
-    uri: {{git-repo}}
+    uri: ((git-repo))
     branches: .*-pending-\d*
-    private_key: {{private-repo-key}}
+    private_key: ((private-repo-key))
 
-- name: {{project-name}}
+
+- name: ((project-name))
   type: git-multibranch
   source:
-    uri: {{git-repo}}
-    branch: {{main-branch}}
-    private_key: {{private-repo-key}}
+    uri: ((git-repo))
+    branch: ((main-branch))
+    private_key: ((private-repo-key))
 
 - name: slack
   type: slack-notification
   source:
-    url: {{slack-url}}
+    url: ((slack-url))
 
 resource_types:
 - name: git-multibranch
