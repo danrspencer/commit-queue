@@ -15,8 +15,10 @@ GIT_WEB_URL=`git remote -v | grep push | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
 
+# && [ -z "`echo ${BRANCH} | grep ".*${REGEX}"`" ]
+
 for BRANCH in $(git branch -r | sed /\*/d); do
-    if [ -z "`git log -1 --after="${AGE}" -s ${BRANCH}`" ] && [ -z "`echo ${BRANCH} | grep "${REGEX}"`" ]; then
+    if [ -z "`git log -1 --after="${AGE}" -s ${BRANCH}`" ]; then
         BRANCHES+=`git log --pretty=format:"%ct %H %ae %s" -s ${BRANCH} \
             | awk '{ print "{" }
                    { print "    \"color\": \"'${COLOR}'\"," }
