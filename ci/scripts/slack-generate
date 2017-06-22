@@ -31,11 +31,9 @@ COMMITS=`git log --pretty=format:"%ct %H %ae %s" origin/${TARGET_BRANCH}..${CURR
       { $1=$2=$3=""; print "    \"title\": \""$0"\"" }
                    { print "}," }'`
 
-PAYLOAD="payload={
-    \"attachments\": [
-        ${COMMITS%?}
-    ]
-}"
+PAYLOAD="[
+    ${COMMITS%?}
+]"
 
 PROJECT_ROOT=`git rev-parse --show-toplevel`
 
