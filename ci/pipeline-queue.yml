@@ -70,7 +70,11 @@ jobs:
 
 - name: cleanup-branches
   plan:
+  - get: 10am
+    trigger: true
   - get: master
+    passed: [ merge-commits ]
+    # Send warning about branches that will get deleted
   - task: run
     file: master/ci/tasks/slack-old-branches.yml
     params:
@@ -85,7 +89,32 @@ jobs:
       icon_url: ((slack-image))
       text: |
           *The following branches will be deleted tomorrow...*
+
+          If any of them are still required, rename them
       attachments_file: slack-payload/warning.json
+    # Delete old branches and notify
+  - task: run
+    file: master/ci/tasks/slack-old-branches.yml
+    params:
+      branch-age: "3 days ago"
+      branch-regex: ((pending-branches))
+      color: "#ff0000"
+      output: "deleted.json"
+      private-repo-key: ((private-repo-key))
+  - task: run
+    file: master/ci/tasks/delete-old-branches.yml
+    params:
+      branch-age: "3 days ago"
+      branch-regex: ((pending-branches))
+      color: "#ff0000"
+      private-repo-key: ((private-repo-key))
+  - put: slack
+    params:
+      username: ((project-name))
+      icon_url: ((slack-image))
+      text: |
+          *The following branches have been deleted...*
+      attachments_file: slack-payload/deleted.json
 
 resources:
 - name: pending
@@ -107,6 +136,13 @@ resources:
   type: slack-notification
   source:
     url: ((slack-url))
+
+- name: 10am
+  type: time
+  source:
+    start: "1000"
+    stop: "1005"
+    location: Europe/London
 
 resource_types:
 - name: git-multibranch

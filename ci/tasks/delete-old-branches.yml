@@ -1,0 +1,23 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: governmentpaas/git-ssh
+
+inputs:
+- name: master
+
+outputs:
+- name: slack-payload
+
+run:
+  dir: master
+  path: sh
+  args:
+  - -exc
+  - |
+    ci/scripts/setup-ssh
+    ci/scripts/delete-old-branches
