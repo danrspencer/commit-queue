@@ -73,7 +73,6 @@ jobs:
   - get: 10am
     trigger: true
   - get: master
-    passed: [ merge-commits ]
     # Send warning about branches that will get deleted
   - task: run
     file: master/ci/tasks/slack-old-branches.yml
@@ -90,7 +89,7 @@ jobs:
       text: |
           *The following branches will be deleted tomorrow...*
 
-          If any of them are still required, rename them
+          _If any of them are still required, rename them._
       attachments_file: slack-payload/warning.json
     # Delete old branches and notify
   - task: run
@@ -141,7 +140,7 @@ resources:
   type: time
   source:
     start: "1000"
-    stop: "1005"
+    stop: "1030"
     location: Europe/London
 
 resource_types:
