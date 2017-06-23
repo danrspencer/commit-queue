@@ -74,7 +74,7 @@ jobs:
     trigger: true
   - get: master
     # Send warning about branches that will get deleted
-  - task: run
+  - task: generate-warning-notification
     file: master/ci/tasks/slack-old-branches.yml
     params:
       branch-age: "2 days ago"
@@ -92,7 +92,7 @@ jobs:
           _If any of them are still required, rename them._
       attachments_file: slack-payload/warning.json
     # Delete old branches and notify
-  - task: run
+  - task: generate-delete-notification
     file: master/ci/tasks/slack-old-branches.yml
     params:
       branch-age: "3 days ago"
@@ -100,7 +100,7 @@ jobs:
       color: "#ff0000"
       output: "deleted.json"
       private-repo-key: ((private-repo-key))
-  - task: run
+  - task: delete-branches
     file: master/ci/tasks/delete-old-branches.yml
     params:
       branch-age: "3 days ago"
