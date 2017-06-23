@@ -13,6 +13,8 @@ git remote update origin --prune
 
 for BRANCH in $(git branch -r | sed /\*/d); do
     if [ -z "`git log -1 --after="${AGE}" -s ${BRANCH}`" ] && [ ! -z "`echo ${BRANCH} | grep ${REGEX}`" ]; then
-        git push origin --delete ${BRANCH}
+        BRANCH_NAME=`echo ${BRANCH} | sed 's/.*\/\(.*\)/\1/'`
+
+        git push origin :${BRANCH_NAME}
     fi
 done
