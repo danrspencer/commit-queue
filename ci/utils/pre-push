@@ -5,7 +5,7 @@ CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
 if [[ ${CURRENT_BRANCH} == "master" ]]
 then
     echo
-    echo -e "\033[1;31mNAUGHTY! Use \"p2q\" to push your commits to the queue.033[0m"
+    echo -e "\033[1;31mNAUGHTY! Use \"p2q\" to push your commits to the queue. \033[0m"
     echo
 
     exit 1
