@@ -1,5 +1,6 @@
 jobs:
-- name: validation
+- name: validate-commits
+  max_in_flight: 1
   plan:
   - get: pending
     trigger: true
@@ -20,9 +21,6 @@ jobs:
       file: pending/ci/tasks/placeholder.yml
     - task: linting
       file: pending/ci/tasks/placeholder.yml
-#    Uncomment below to test your failure state
-#    - task: fail
-#      file: pending/ci/tasks/fail.yml
   on_failure:
     put: slack
     params:
@@ -37,11 +35,12 @@ jobs:
   plan:
   - get: pending
     trigger: true
-    passed: [ validation ]
+    passed: [ validate-commits ]
   - put: master
     params:
       repository: pending
-  - put: slack
+  on_success:
+    put: slack
     params:
       username: ((project-name))
       icon_url: ((slack-image))
@@ -73,25 +72,7 @@ jobs:
   - get: 10am
     trigger: true
   - get: master
-    # Send warning about branches that will get deleted
-  - task: generate-warning-notification
-    file: master/ci/tasks/slack-old-branches.yml
-    params:
-      branch-age: "2 days ago"
-      branch-regex: ((pending-branches))
-      color: "#f49542"
-      output: "warning.json"
-      private-repo-key: ((private-repo-key))
-  - put: slack
-    params:
-      username: ((project-name))
-      icon_url: ((slack-image))
-      text: |
-          *The following branches will be deleted tomorrow...*
-
-          _If any of them are still required, rename them._
-      attachments_file: slack-payload/warning.json
-    # Delete old branches and notify
+  # Delete old branches and notify
   - task: generate-delete-notification
     file: master/ci/tasks/slack-old-branches.yml
     params:
@@ -114,6 +95,24 @@ jobs:
       text: |
           *The following branches have been deleted...*
       attachments_file: slack-payload/deleted.json
+  # Send warning about branches that will get deleted
+  - task: generate-warning-notification
+    file: master/ci/tasks/slack-old-branches.yml
+    params:
+      branch-age: "2 days ago"
+      branch-regex: ((pending-branches))
+      color: "#f49542"
+      output: "warning.json"
+      private-repo-key: ((private-repo-key))
+  - put: slack
+    params:
+      username: ((project-name))
+      icon_url: ((slack-image))
+      text: |
+          *The following branches will be deleted tomorrow...*
+
+          _If any of them are still required, rename them._
+      attachments_file: slack-payload/warning.json
 
 resources:
 - name: pending

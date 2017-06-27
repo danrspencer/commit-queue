@@ -10,9 +10,6 @@ image_resource:
 inputs:
 - name: master
 
-outputs:
-- name: slack-payload
-
 run:
   dir: master
   path: sh

@@ -32,6 +32,12 @@ for BRANCH in $(git branch -r | sed /\*/d); do
     fi
 done
 
+if [ -z ${BRANCHES} ]; then
+    BRANCHES="{
+        \"text\": \"[none]\"
+    },"
+fi
+
 PAYLOAD="[
     ${BRANCHES%?}
 ]"

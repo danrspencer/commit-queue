@@ -12,11 +12,19 @@ PROJECT_NAME=`git remote -v | grep fetch | head -n 1 | sed 's/.*:\(.*\)\..*/\1/'
 GIT_WEB_URL=`git remote -v | grep push | head -n 1 | sed 's/.*@\(.*\):\(.*\)\..*/https:\/\/\1\/\2/'`
 
 SSH_KEY_PATH=~/.ssh/id_rsa
-LIVE_URL=https://ec2-concourse.anaplan-np.net
+LIVE_URL=https://ci.concourse.ci
 TEAM_NAME=main
+
+# ------ Defaults ------
+# You shouldn't need to change these
+
+TARGET=			dev
+URL=			http://192.168.100.4:8080
+FLY-OS=				darwin
+
 # --------------------
 
-init: vagrant-up download-fly config pipeline commit-queue browse-dev
+init: start-concourse pipeline-queue browse-dev
 
 # Dev
 login:
@@ -49,19 +57,19 @@ live-pipeline: TARGET=live
 live-pipeline: live-login pipeline
 
 live-pipeline-queue: TARGET=live
+live-login: URL=${LIVE_URL}
 live-pipeline-queue: live-login pipeline-queue
 
 # Setup
-vagrant-up:
-	vagrant box update
-	vagrant up
+start-concourse:
+	./util/setup-local-concourse
 
 download-fly:
-	./scripts/retry curl --user concourse:concourse -o fly '${URL}/api/v1/cli?arch=amd64&platform=${OS}' -m 30
+	./scripts/retry curl --user concourse:concourse -o fly '${URL}/api/v1/cli?arch=amd64&platform=${FLY-OS}' -m 30
 	chmod +x fly
 
-download-fly-linux: OS=linux
-download-fly-win: OS=windows
+download-fly-linux: FLY-OS=linux download-fly
+download-fly-win: FLY-OS=windows download-fly
 
 config:
 	cp -n ./config.yml.sample ./config-dev.yml || true
@@ -69,8 +77,3 @@ config:
 
 browse-dev:
 	open http://192.168.100.4:8080/teams/main/login
-
-# Defaults
-TARGET=dev
-OS=darwin
-URL=http://192.168.100.4:8080
