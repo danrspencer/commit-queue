@@ -2,9 +2,26 @@
 
 set -e
 
-TIMESTAMP=`date +%s`
+MAIN_BRANCH="master"
+
 CURRENT_BRANCH=`git branch | grep \* | awk '{print $2}'`
-PENDING_BRANCH=${CURRENT_BRANCH}-pending-${TIMESTAMP}
+
+if [[ ${MAIN_BRANCH} != ${CURRENT_BRANCH} ]]
+then
+    echo
+    echo -e "\033[1;31mYou are attempting to push to queue from '${CURRENT_BRANCH}',"
+    echo -e "the queue is only support from branch '${MAIN_BRANCH}' \033[0m"
+    exit 1
+fi
+
+TIMESTAMP=`date +%s`
+PENDING_BRANCH=${MAIN_BRANCH}-pending-${TIMESTAMP}
+
+# attempt to restore master if someone hits ctrl+c
+trap ctrl_c INT
+function ctrl_c() {
+    git checkout ${MAIN_BRANCH}
+}
 
 if [[ ! -z $* ]]
 then
@@ -14,13 +31,13 @@ then
 fi
 
 echo
-echo -e "\033[1;34mPulling 'origin/${CURRENT_BRANCH}' into local branch... \033[0m"
+echo -e "\033[1;34mPulling 'origin/${MAIN_BRANCH}' into local branch... \033[0m"
 git pull --rebase --autostash
 
-if [[ -z `git cherry origin/${CURRENT_BRANCH}` ]]
+if [[ -z `git cherry origin/${MAIN_BRANCH}` ]]
 then
     echo
-    echo "Your branch is up-to-date with 'origin/${CURRENT_BRANCH}'."
+    echo "Your branch is up-to-date with 'origin/${MAIN_BRANCH}'."
     echo
 
     exit 0
@@ -36,8 +53,8 @@ echo -e "\033[1;34mPushing changes... \033[0m"
 git push --set-upstream origin ${PENDING_BRANCH}
 
 echo
-echo -e "\033[1;34mReturning to '${CURRENT_BRANCH}'... \033[0m"
-git checkout ${CURRENT_BRANCH}
+echo -e "\033[1;34mReturning to '${MAIN_BRANCH}'... \033[0m"
+git checkout ${MAIN_BRANCH}
 
 echo
 echo -e "\033[1;34mCleaning up local branch... \033[0m"
